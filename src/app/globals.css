@@ -9,17 +9,13 @@
   --color-white: #ffffff;
 
   /* TYPOGRAPHY MAPPING */
-  /* This links the CSS vars from layout.js to Tailwind utilities */
   --font-sans: var(--font-space);
-  --font-display: var(--font-syne);
+  --font-display: var(--font-funky); /* <--- Updated to match the localFont variable */
   
-  /* ANIMATIONS (We will add more here later) */
   --animate-fade-in: fade-in 0.5s ease-in-out;
 }
 
-/* CUSTOM UTILITIES & RESET */
 @layer base {
-  /* KILL DEFAULT BROWSER BEHAVIORS */
   html {
     @apply h-full;
   }
@@ -27,18 +23,16 @@
   body {
     background-color: var(--color-navy);
     color: var(--color-white);
-    cursor: none; /* KILL THE DEFAULT CURSOR */
+    cursor: none; 
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 
-  /* HIDE SCROLLBARS */
   ::-webkit-scrollbar {
     width: 0px;
     background: transparent;
   }
   
-  /* SELECTION COLOR */
   ::selection {
     background-color: var(--color-lime);
     color: var(--color-navy);
@@ -49,15 +43,12 @@
 html.lenis, html.lenis body {
   height: auto;
 }
-
 .lenis.lenis-smooth {
   scroll-behavior: auto !important;
 }
-
 .lenis.lenis-smooth [data-lenis-prevent] {
   overscroll-behavior: contain;
 }
-
 .lenis.lenis-stopped {
   overflow: hidden;
 }
