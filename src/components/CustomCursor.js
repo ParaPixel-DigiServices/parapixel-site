@@ -3,70 +3,63 @@ import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
 export default function CustomCursor() {
-  // We create an array of 12 refs for the snake tail
-  const trailRefs = useRef([]); 
+  const cursorRef = useRef(null);   // The small dot
+  const followerRef = useRef(null); // The big circle
 
   useEffect(() => {
-    // 1. SETUP: Hide default cursor
-    document.body.style.cursor = 'none';
+    // 1. Initial Position Setup to prevent jumping
+    gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50 });
+    gsap.set(followerRef.current, { xPercent: -50, yPercent: -50 });
 
-    // 2. MOVEMENT LOGIC
     const moveCursor = (e) => {
-      // Loop through every "pixel" in the tail
-      trailRefs.current.forEach((el, index) => {
-        if (!el) return;
+      // Dot moves instantly
+      gsap.to(cursorRef.current, { x: e.clientX, y: e.clientY, duration: 0 });
+      // Follower has a fun, bouncy lag
+      gsap.to(followerRef.current, { x: e.clientX, y: e.clientY, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
+    };
 
-        // Calculate delay based on index (0 = fast, 11 = slow)
-        const delay = index * 0.02; 
+    const onHover = () => {
+      // Expand and turn Pink
+      gsap.to(followerRef.current, { scale: 3, backgroundColor: '#ff6b6b', opacity: 0.3, duration: 0.3 });
+      gsap.to(cursorRef.current, { scale: 0, duration: 0.3 }); // Hide dot
+    };
 
-        gsap.to(el, {
-          x: e.clientX,
-          y: e.clientY,
-          duration: 0.1 + delay, // The "Snake" effect
-          ease: 'power2.out',
-        });
-      });
+    const onLeave = () => {
+      // Reset
+      gsap.to(followerRef.current, { scale: 1, backgroundColor: 'transparent', opacity: 1, duration: 0.3 });
+      gsap.to(cursorRef.current, { scale: 1, duration: 0.3 });
     };
 
     window.addEventListener('mousemove', moveCursor);
-    return () => window.removeEventListener('mousemove', moveCursor);
+
+    // Auto-detect clickable items
+    const clickables = document.querySelectorAll('a, button, input, .hover-trigger');
+    clickables.forEach((el) => {
+      el.addEventListener('mouseenter', onHover);
+      el.addEventListener('mouseleave', onLeave);
+    });
+
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+      clickables.forEach((el) => {
+        el.removeEventListener('mouseenter', onHover);
+        el.removeEventListener('mouseleave', onLeave);
+      });
+    };
   }, []);
 
   return (
     <>
-      {/* THE LIQUID FILTER (Hidden SVG) */}
-      <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-        <defs>
-          <filter id="goo">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 35 -15"
-              result="goo"
-            />
-            <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-          </filter>
-        </defs>
-      </svg>
-
-      {/* THE CURSOR CONTAINER */}
-      <div className="cursor-wrapper">
-        {/* Render 12 trailing pixels */}
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            ref={(el) => (trailRefs.current[i] = el)}
-            className="cursor-trail"
-            style={{
-              width: `${25 - i * 1.5}px`, // Gets smaller towards the tail
-              height: `${25 - i * 1.5}px`,
-              opacity: 1 - i * 0.05, // Slight fade at the end
-              zIndex: 100 - i, // Head is on top
-            }}
-          />
-        ))}
-      </div>
+      {/* Small Dot (Black Ink) */}
+      <div 
+        ref={cursorRef} 
+        className="fixed top-0 left-0 w-3 h-3 bg-black rounded-full pointer-events-none z-[9999]"
+      />
+      {/* Big Ring (Black Outline) */}
+      <div 
+        ref={followerRef} 
+        className="fixed top-0 left-0 w-10 h-10 border-2 border-black rounded-full pointer-events-none z-[9998] transition-colors"
+      />
     </>
   );
 }

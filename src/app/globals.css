@@ -1,77 +1,86 @@
 @import "tailwindcss";
 
 @theme {
-  /* BRAND PALETTE */
-  --color-navy: #0c0f2c;
-  --color-purple: #6c3d92;
-  --color-lilac: #dca0f6;
-  --color-lime: #c1ff72;
-  --color-white: #ffffff;
-
-  /* TYPOGRAPHY MAPPING */
-  --font-sans: var(--font-space);
-  --font-display: var(--font-funky); /* <--- Updated to match the localFont variable */
+  --color-background: #fdfbf7;
+  --color-foreground: #1a1a1a;
+  --color-pop-pink: #ff6b6b;
+  --color-pop-blue: #4ecdc4;
+  --color-pop-yellow: #ffe66d;
   
-  --animate-fade-in: fade-in 0.5s ease-in-out;
+  /* Fonts */
+  --font-unbounded: var(--font-unbounded);
+  --font-funky: var(--font-funky); /* Register Funky */
+  --font-space: var(--font-space);
 }
 
-@layer base {
-  html {
-    @apply h-full;
-  }
-  
-  body {
-    background-color: var(--color-navy);
-    color: var(--color-white);
-    cursor: none; 
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-
-  ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-  }
-  
-  ::selection {
-    background-color: var(--color-lime);
-    color: var(--color-navy);
-  }
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-unbounded), sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+  cursor: none;
 }
 
-/* LENIS SCROLL RESET */
-html.lenis, html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
+/* Custom Font Class */
+.font-funky {
+  font-family: var(--font-funky), sans-serif;
 }
 
-/* ... existing code ... */
+.flash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: white;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+}
 
-/* CURSOR PHYSICS LAYER */
-.cursor-wrapper {
-  filter: url('#goo'); /* This applies the liquid melting effect */
+.canvas-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.noise-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: exclusion; /* Makes colors funky/inverted on top of images */
+  z-index: 50;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-.cursor-trail {
-  position: absolute;
-  background-color: var(--color-lime);
-  border-radius: 20%; /* Slightly rounded squares (Voxels) */
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+.text-stroke-black {
+  -webkit-text-stroke: 2px black;
+  color: transparent;
+}
+
+a, button, .hover-trigger { cursor: none; }
+
+/* ... existing styles ... */
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  animation: marquee 20s linear infinite;
+}
+
+/* Utilities for the Service Section */
+.text-stroke-white {
+  -webkit-text-stroke: 2px white;
+  color: transparent;
 }
