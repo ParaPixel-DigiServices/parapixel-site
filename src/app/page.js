@@ -11,27 +11,42 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// --- DATA ---
+// =====================================================================
+// 1. CONFIGURATION: ENTER YOUR CLOUD NAME HERE
+// =====================================================================
+const CLOUD_NAME = "defhezyxg"; // <--- CHANGE THIS
+
+// Helper to generate optimized Cloudinary URLs
+// Usage: cld("folder/image-name")
+const cld = (publicId) => {
+  // If you haven't uploaded images yet, this returns a placeholder
+  if (CLOUD_NAME === "replace_with_your_cloud_name") return "https://via.placeholder.com/1200x800/000000/FFFFFF?text=UPLOAD+IMAGES";
+  
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200/${publicId}`;
+};
+
+// =====================================================================
+// 2. DATA (REPLACE 'publicIds' WITH YOUR IMAGE NAMES)
+// =====================================================================
+
 const menuItems = [
-  { label: "SERVICES", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=800", href: "#services" },
-  { label: "WORK", img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800", href: "#work" },
-  { label: "PROCESS", img: "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=800", href: "#process" },
-  { label: "CONTACT", img: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=800", href: "#contact" }
+  { label: "SERVICES", img: cld("services"), href: "#services" },
+  { label: "WORK", img: cld("works"), href: "#work" },
+  { label: "PROCESS", img: cld("process"), href: "#process" },
+  { label: "CONTACT", img: cld("contact"), href: "#contact" }
 ];
 
 const services = [
-  { id: "01", title: "WEB DESIGN", desc: "IMMERSIVE 3D", tags: "WEBGL /// THREE.JS /// REACT /// NEXT.JS ///", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200", color: "text-[#ccff00]", rotate: "md:rotate-2" },
-  { id: "02", title: "MOBILE APPS", desc: "NATIVE SYSTEMS", tags: "IOS /// ANDROID /// FLUTTER /// REACT NATIVE ///", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1200", color: "text-[#ff0055]", rotate: "md:-rotate-1" },
-  { id: "03", title: "SEO GROWTH", desc: "DOMINANCE", tags: "ANALYTICS /// ADS /// RANKING /// STRATEGY ///", img: "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=1200", color: "text-[#00ffff]", rotate: "md:rotate-3" },
-  { id: "04", title: "SAAS BUILD", desc: "CLOUD SYSTEMS", tags: "AWS /// DOCKER /// NEXT.JS /// SUPABASE ///", img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200", color: "text-[#ffffff]", rotate: "md:-rotate-2" },
-  { id: "05", title: "MARKETING", desc: "VISUAL VIOLENCE", tags: "STRATEGY /// VIRAL /// CONTENT /// CAMPAIGNS ///", img: "https://images.unsplash.com/photo-1558591710-4b4a1ae0f04d?q=80&w=1200", color: "text-[#ffaa00]", rotate: "md:rotate-1" }
+  { id: "01", title: "WEB DESIGN", desc: "IMMERSIVE 3D", tags: "WEBGL /// THREE.JS /// REACT /// NEXT.JS ///", img: cld("web"), color: "text-[#ccff00]", rotate: "md:rotate-2" },
+  { id: "02", title: "MOBILE APPS", desc: "NATIVE SYSTEMS", tags: "IOS /// ANDROID /// FLUTTER /// REACT NATIVE ///", img: cld("mobile"), color: "text-[#ff0055]", rotate: "md:-rotate-1" },
+  { id: "03", title: "SEO GROWTH", desc: "DOMINANCE", tags: "ANALYTICS /// ADS /// RANKING /// STRATEGY ///", img: cld("seo"), color: "text-[#00ffff]", rotate: "md:rotate-3" },
+  { id: "04", title: "SAAS BUILD", desc: "CLOUD SYSTEMS", tags: "AWS /// DOCKER /// NEXT.JS /// SUPABASE ///", img: cld("saas"), color: "text-[#ffffff]", rotate: "md:-rotate-2" },
+  { id: "05", title: "MARKETING", desc: "VISUAL VIOLENCE", tags: "STRATEGY /// VIRAL /// CONTENT /// CAMPAIGNS ///", img: cld("marketing"), color: "text-[#ffaa00]", rotate: "md:rotate-1" }
 ];
 
 const projects = [
-  { id: "01", name: "NEON FLUX", client: "NIKE LABS", type: "WEBGL", img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1200" },
-  { id: "02", name: "VOID MARKET", client: "BINANCE", type: "WEB3", img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200" },
-  { id: "03", name: "CYBER DUST", client: "TESLA", type: "APP", img: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1200" },
-  { id: "04", name: "HYPER LOOP", client: "STRIPE", type: "SAAS", img: "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?q=80&w=1200" },
+  { id: "01", name: "REFINE", client: "CLASSROOM AI", type: "ADMIN DASHBOARD", img: cld("classroom") },
+  { id: "02", name: "CONVERSO", client: "ALLEN", type: "SAAS", img: cld("converso") },
 ];
 
 const phases = [
