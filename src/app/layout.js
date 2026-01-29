@@ -1,7 +1,8 @@
 import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import CustomCursor from "../components/CustomCursor"; // <--- IMPORT THIS
+import CustomCursor from "../components/CustomCursor";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const superFunky = localFont({
   src: "./fonts/super-funky.ttf", 
@@ -27,10 +28,11 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         {/* 1. ACTIVATING THE CURSOR */}
         <CustomCursor />
-        
-        <main className="relative z-10">
-          {children}
-        </main>
+        <SmoothScroll>
+          <main className="relative z-10">
+            {children}
+          </main>
+        </SmoothScroll>
       </body>
     </html>
   );
