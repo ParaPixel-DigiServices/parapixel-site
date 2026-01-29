@@ -52,3 +52,26 @@ html.lenis, html.lenis body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
+/* ... existing code ... */
+
+/* CURSOR PHYSICS LAYER */
+.cursor-wrapper {
+  filter: url('#goo'); /* This applies the liquid melting effect */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: exclusion; /* Makes colors funky/inverted on top of images */
+}
+
+.cursor-trail {
+  position: absolute;
+  background-color: var(--color-lime);
+  border-radius: 20%; /* Slightly rounded squares (Voxels) */
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}

@@ -1,15 +1,14 @@
-import localFont from "next/font/local"; // <--- New Import
+import localFont from "next/font/local";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import CustomCursor from "../components/CustomCursor"; // <--- IMPORT THIS
 
-// 1. Configure Your Custom "Super Funky" Font
 const superFunky = localFont({
-  src: "./fonts/super-funky.ttf", // Make sure this extension matches your file (.ttf, .otf, .woff2)
-  variable: "--font-funky",       // We name the CSS variable here
+  src: "./fonts/super-funky.ttf", 
+  variable: "--font-funky",       
   display: "swap",
 });
 
-// 2. The Tech Font (Stays the same)
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "500", "700"],
@@ -24,9 +23,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    // Inject both variables into the HTML tag
     <html lang="en" className={`${superFunky.variable} ${spaceGrotesk.variable}`}>
       <body className="antialiased">
+        {/* 1. ACTIVATING THE CURSOR */}
+        <CustomCursor />
+        
         <main className="relative z-10">
           {children}
         </main>
