@@ -45,8 +45,11 @@ const services = [
 ];
 
 const projects = [
-  { id: "01", name: "REFINE", client: "CLASSROOM AI", type: "ADMIN DASHBOARD", img: cld("classroom") },
+  { id: "01", name: "TOURVISTO", client: "INHOUSE", type: "ADMIN DASHBOARD", img: cld("admindb") },
   { id: "02", name: "CONVERSO", client: "ALLEN", type: "SAAS", img: cld("converso") },
+  { id: "03", name: "NIMBUS", client: "MOCKUP", type: "ECOMMERCE", img: cld("nimbus") },
+  { id: "04", name: "ZENTRI", client: "CLONE", type: "GAMING", img: cld("zentri") },
+  { id: "05", name: "VELVET POUR", client: "MOCKUP", type: "GSAP", img: cld("velvet ") }
 ];
 
 const phases = [
@@ -346,7 +349,7 @@ export default function Home() {
             {projects.map((project, i) => (
                 <div key={i} className="work-panel w-screen h-screen flex flex-col justify-center items-center border-r border-[#222] relative bg-[#0a0a0a]">
                     <div className="relative w-[80vw] h-[50vh] md:w-[50vw] md:h-[60vh] overflow-hidden cursor-none group" onMouseEnter={cursorGrow} onMouseLeave={cursorShrink}>
-                        <img src={project.img} alt={project.name} className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700 ease-expo grayscale group-hover:grayscale-0" />
+                        <img src={project.img} alt={project.name} className="w-full h-full object-contains transition-transform duration-700 ease-expo" />
                         <div className="absolute top-4 left-4 bg-black text-white px-4 py-1 font-mono text-sm md:text-xl border border-white/20">{project.type}</div>
                     </div>
                     <div className="mt-8 text-center z-20">
