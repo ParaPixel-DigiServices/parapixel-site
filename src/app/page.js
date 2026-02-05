@@ -11,45 +11,33 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// =====================================================================
-// 1. CONFIGURATION: ENTER YOUR CLOUD NAME HERE
-// =====================================================================
-const CLOUD_NAME = "defhezyxg"; // <--- CHANGE THIS
 
-// Helper to generate optimized Cloudinary URLs
-// Usage: cld("folder/image-name")
-const cld = (publicId) => {
-  // If you haven't uploaded images yet, this returns a placeholder
-  if (CLOUD_NAME === "replace_with_your_cloud_name") return "https://via.placeholder.com/1200x800/000000/FFFFFF?text=UPLOAD+IMAGES";
-  
-  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto,w_1200/${publicId}`;
-};
 
 // =====================================================================
 // 2. DATA (REPLACE 'publicIds' WITH YOUR IMAGE NAMES)
 // =====================================================================
 
 const menuItems = [
-  { label: "SERVICES", img: cld("services"), href: "#services" },
-  { label: "WORK", img: cld("works"), href: "#work" },
-  { label: "PROCESS", img: cld("process"), href: "#process" },
-  { label: "CONTACT", img: cld("contact"), href: "#contact" }
+  { label: "SERVICES", img: "/services.png", href: "#services" },
+  { label: "WORK", img: "/works.png", href: "#work" },
+  { label: "PROCESS", img: "/process.png", href: "#process" },
+  { label: "CONTACT", img: "/contact.png", href: "#contact" }
 ];
 
 const services = [
-  { id: "01", title: "WEB DESIGN & DEV", desc: "IMMERSIVE 3D", tags: "WEBGL /// THREE.JS /// REACT /// NEXT.JS ///", img: cld("web"), color: "text-[#ccff00]", rotate: "md:rotate-2" },
-  { id: "02", title: "MOBILE APPS", desc: "NATIVE SYSTEMS", tags: "IOS /// ANDROID /// FLUTTER /// REACT NATIVE ///", img: cld("mobile"), color: "text-[#ff0055]", rotate: "md:-rotate-1" },
-  { id: "03", title: "SEO GROWTH", desc: "DOMINANCE", tags: "ANALYTICS /// ADS /// RANKING /// STRATEGY ///", img: cld("seo"), color: "text-[#00ffff]", rotate: "md:rotate-3" },
-  { id: "04", title: "SAAS BUILD", desc: "CLOUD SYSTEMS", tags: "AWS /// DOCKER /// NEXT.JS /// SUPABASE ///", img: cld("saas"), color: "text-[#ffffff]", rotate: "md:-rotate-2" },
-  { id: "05", title: "MARKETING", desc: "VISUAL VIOLENCE", tags: "STRATEGY /// VIRAL /// CONTENT /// CAMPAIGNS ///", img: cld("marketing"), color: "text-[#ffaa00]", rotate: "md:rotate-1" }
+  { id: "01", title: "WEB DESIGN & DEV", desc: "IMMERSIVE 3D", tags: "WEBGL /// THREE.JS /// REACT /// NEXT.JS ///", img: "/webdev.png", color: "text-[#ccff00]", rotate: "md:rotate-2" },
+  { id: "02", title: "MOBILE APPS", desc: "NATIVE SYSTEMS", tags: "IOS /// ANDROID /// FLUTTER /// REACT NATIVE ///", img: "/appdev.png", color: "text-[#ff0055]", rotate: "md:-rotate-1" },
+  { id: "03", title: "SEO GROWTH", desc: "DOMINANCE", tags: "ANALYTICS /// ADS /// RANKING /// STRATEGY ///", img: "/seo.png", color: "text-[#00ffff]", rotate: "md:rotate-3" },
+  { id: "04", title: "SAAS BUILD", desc: "CLOUD SYSTEMS", tags: "AWS /// DOCKER /// NEXT.JS /// SUPABASE ///", img: "/saas.png", color: "text-[#ffffff]", rotate: "md:-rotate-2" },
+  { id: "05", title: "MARKETING", desc: "VISUAL VIOLENCE", tags: "STRATEGY /// VIRAL /// CONTENT /// CAMPAIGNS ///", img: "/marketing.png", color: "text-[#ffaa00]", rotate: "md:rotate-1" }
 ];
 
 const projects = [
-  { id: "01", name: "TOURVISTO", client: "INHOUSE", type: "ADMIN DASHBOARD", img: cld("admindb") },
-  { id: "02", name: "CONVERSO", client: "ALLEN", type: "SAAS", img: cld("converso") },
-  { id: "03", name: "NIMBUS", client: "MOCKUP", type: "ECOMMERCE", img: cld("nimbus") },
-  { id: "04", name: "ZENTRI", client: "CLONE", type: "GAMING", img: cld("zentri") },
-  { id: "05", name: "VELVET POUR", client: "MOCKUP", type: "GSAP", img: cld("velvet ") }
+  { id: "01", name: "TOURVISTO", client: "INHOUSE", type: "ADMIN DASHBOARD", img: "/admindb.png" },
+  { id: "02", name: "CONVERSO", client: "ALLEN", type: "SAAS", img: "/converso.png" },
+  { id: "03", name: "NIMBUS", client: "MOCKUP", type: "ECOMMERCE", img: "/nimbus.png" },
+  { id: "04", name: "ZENTRI", client: "CLONE", type: "GAMING", img: "/zentri.png" },
+  { id: "05", name: "VELVET POUR", client: "MOCKUP", type: "GSAP", img: "/velvet.png" }
 ];
 
 const phases = [
