@@ -5,71 +5,89 @@ import gsap from 'gsap';
 export default function CustomCursor() {
   const cursorRef = useRef(null);   
   const followerRef = useRef(null); 
-  const [cursorText, setCursorText] = useState(""); // State for text
+  const [cursorText, setCursorText] = useState(""); 
 
   useEffect(() => {
-    gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50 });
-    gsap.set(followerRef.current, { xPercent: -50, yPercent: -50 });
+    // 1. Initial Position (Hide until mouse moves)
+    gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50, scale: 0 });
+    gsap.set(followerRef.current, { xPercent: -50, yPercent: -50, scale: 0 });
 
+    // 2. Movement Logic
     const moveCursor = (e) => {
+      // Reveal on first move
+      gsap.to([cursorRef.current, followerRef.current], { scale: 1, duration: 0.2, overwrite: 'auto' });
+      
       gsap.to(cursorRef.current, { x: e.clientX, y: e.clientY, duration: 0 });
-      gsap.to(followerRef.current, { x: e.clientX, y: e.clientY, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
+      gsap.to(followerRef.current, { x: e.clientX, y: e.clientY, duration: 0.6, ease: 'power3.out' });
     };
 
-    // Standard Hover
-    const onHover = () => {
-      gsap.to(followerRef.current, { scale: 3, backgroundColor: '#ff6b6b', opacity: 0.3, duration: 0.3 });
-      gsap.to(cursorRef.current, { scale: 0, duration: 0.3 });
+    // 3. Hover Logic (Event Delegation - Works on EVERYTHING)
+    const onMouseOver = (e) => {
+        const target = e.target;
+
+        // Check for "hover-trigger" (Links, Buttons)
+        if (target.closest('.hover-trigger') || target.tagName === 'A' || target.tagName === 'BUTTON') {
+            gsap.to(followerRef.current, { 
+                scale: 3, 
+                backgroundColor: '#ff6b6b', 
+                opacity: 0.5, 
+                mixBlendMode: 'difference',
+                duration: 0.3 
+            });
+            gsap.to(cursorRef.current, { scale: 0, duration: 0.3 });
+        }
+        
+        // Check for "project-hover" (Work Cards)
+        else if (target.closest('.project-hover')) {
+            setCursorText("VIEW");
+            gsap.to(followerRef.current, { 
+                scale: 4, // Bigger for text
+                backgroundColor: '#ccff00', 
+                opacity: 1,
+                mixBlendMode: 'normal', // Solid color for text readability
+                duration: 0.3 
+            });
+            gsap.to(cursorRef.current, { scale: 0, duration: 0.3 });
+        }
     };
 
-    const onLeave = () => {
-      gsap.to(followerRef.current, { scale: 1, backgroundColor: 'transparent', opacity: 1, duration: 0.3, width: 40, height: 40, borderRadius: '50%' });
-      gsap.to(cursorRef.current, { scale: 1, duration: 0.3 });
-      setCursorText(""); // Reset text
+    const onMouseOut = (e) => {
+        const target = e.target;
+        
+        // Reset if leaving a trigger
+        if (target.closest('.hover-trigger') || target.tagName === 'A' || target.tagName === 'BUTTON' || target.closest('.project-hover')) {
+            gsap.to(followerRef.current, { 
+                scale: 1, 
+                backgroundColor: 'transparent', 
+                opacity: 1, 
+                mixBlendMode: 'normal',
+                duration: 0.3 
+            });
+            gsap.to(cursorRef.current, { scale: 1, duration: 0.3 });
+            setCursorText(""); 
+        }
     };
 
-    // Project "VIEW" Hover
-    const onProjectHover = () => {
-        setCursorText("VIEW");
-        gsap.to(followerRef.current, { scale: 3, backgroundColor: '#ccff00', opacity: 1, duration: 0.3, mixBlendMode: 'difference' });
-        gsap.to(cursorRef.current, { scale: 0, duration: 0.3 });
-    };
-
+    // Attach to Window (Catches all hover events everywhere)
     window.addEventListener('mousemove', moveCursor);
-
-    // Standard clickables
-    const clickables = document.querySelectorAll('a, button, input, .hover-trigger');
-    clickables.forEach((el) => {
-      el.addEventListener('mouseenter', onHover);
-      el.addEventListener('mouseleave', onLeave);
-    });
-
-    // Project Cards (Add class 'project-hover' to your project images)
-    const projects = document.querySelectorAll('.project-hover');
-    projects.forEach((el) => {
-        el.addEventListener('mouseenter', onProjectHover);
-        el.addEventListener('mouseleave', onLeave);
-    });
+    window.addEventListener('mouseover', onMouseOver);
+    window.addEventListener('mouseout', onMouseOut);
 
     return () => {
       window.removeEventListener('mousemove', moveCursor);
-      clickables.forEach((el) => {
-        el.removeEventListener('mouseenter', onHover);
-        el.removeEventListener('mouseleave', onLeave);
-      });
-      projects.forEach((el) => {
-        el.removeEventListener('mouseenter', onProjectHover);
-        el.removeEventListener('mouseleave', onLeave);
-      });
+      window.removeEventListener('mouseover', onMouseOver);
+      window.removeEventListener('mouseout', onMouseOut);
     };
   }, []);
 
   return (
     <>
-      <div ref={cursorRef} className="fixed top-0 left-0 w-3 h-3 bg-black rounded-full pointer-events-none z-[9999]" />
-      <div ref={followerRef} className="fixed top-0 left-0 w-10 h-10 border-2 border-black rounded-full pointer-events-none z-[9998] transition-colors flex items-center justify-center overflow-hidden">
-        {/* Dynamic Text inside Cursor */}
-        <span className="text-[3px] font-black text-black">{cursorText}</span>
+      {/* DOT - Z-Index 11001 to beat Nav */}
+      <div ref={cursorRef} className="fixed top-0 left-0 w-3 h-3 bg-[#ccff00] rounded-full pointer-events-none z-[11001] mix-blend-difference" />
+      
+      {/* FOLLOWER - Z-Index 11000 */}
+      <div ref={followerRef} className="fixed top-0 left-0 w-10 h-10 border-2 border-[#ccff00] rounded-full pointer-events-none z-[11000] flex items-center justify-center overflow-hidden mix-blend-difference">
+        <span className="text-[10px] font-black text-black">{cursorText}</span>
       </div>
     </>
   );

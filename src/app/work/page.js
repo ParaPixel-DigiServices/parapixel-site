@@ -131,3 +131,19 @@ export default function Work() {
     </main>
   );
 }
+
+
+
+
+
+
+const testimonials = [
+    { text: "ParaPixel delivered a stable system that improved our internal operations.", author: "Mahesh Awasthi, @MCG Cloud", img: "/1.png" },
+    { text: "“Reliable team with solid technical expertise. The platform works great.”", author: "Shekhar Rathi @Converso", img: "/2.png" },
+    { text: "Great experience working with ParaPixel. The website looks modern and performs very well.", author: "Gurwinder Singh, CEO @GrabWare Inc.", img: "/3.png" },
+    { text: "ParaPixel built a fast, reliable ecommerce platform for us. Everything works smoothly and is easy to manage.", author: "Aryan @Sandhya Foods", img: "/4.png" },
+    { text: "They built a premium ecommerce experience that fits our brand perfectly.", author: "Somraj Lodhi, Founder @DarkElk", img: "/5.png" },
+    { text: "ParaPixel understood our SaaS vision and delivered a stable, scalable platform.", author: "Pratul Chandra, CEO @ChampionsPrep", img: "/6.png" },
+    { text: "Strong engineering and clean execution. ParaPixel delivered exactly what we needed.", author: "Sinan C P, Founder @Nanis", img: "/7.png" },
+    { text: "The patient management system is efficient and easy to use. Very satisfied with ParaPixel.", author: "Dr. Subrahmanya Hegde @Sushruta Vitality Hub", img: "/8.png" },
+];

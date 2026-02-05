@@ -1,12 +1,13 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
-import SceneContainer from "@/components/canvas/SceneContainer"; // Uses your dynamic loader
+import SceneContainer from "@/components/canvas/SceneContainer"; 
 import CustomCursor from "@/components/CustomCursor";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLenis } from '@studio-freight/react-lenis';
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -19,6 +20,7 @@ const CONTACT_EMAIL = "hello@parapixel.in.net";
 const menuItems = [
   { label: "SERVICES", img: "/services.png", href: "#services" },
   { label: "WORK", img: "/works.png", href: "#work" },
+  { label: "REVIEWS", img: "/reviews.png", href: "#testimonials" },
   { label: "PROCESS", img: "/process.png", href: "#process" },
   { label: "CONTACT", img: "/contact.png", href: "#contact" }
 ];
@@ -46,6 +48,19 @@ const phases = [
   { id: "04", title: "DEPLOYMENT", desc: "Final QA, SEO audit, and launch. We ensure 99.9% uptime and hand over the keys.", color: "bg-white text-black" },
 ];
 
+const testimonials = [
+    { text: "ParaPixel delivered a stable system that improved our internal operations.", author: "Mahesh Awasthi, @MCG Cloud", img: "/1.png" },
+    { text: "“Reliable team with solid technical expertise. The platform works great.”", author: "Shekhar Rathi @Converso", img: "/2.png" },
+    { text: "Great experience working with ParaPixel. The website looks modern and performs very well.", author: "Gurwinder Singh, CEO @GrabWare Inc.", img: "/3.png" },
+    { text: "ParaPixel built a fast, reliable ecommerce platform for us. Everything works smoothly and is easy to manage.", author: "Aryan @Sandhya Foods", img: "/4.png" },
+    { text: "They built a premium ecommerce experience that fits our brand perfectly.", author: "Somraj Lodhi, Founder @DarkElk", img: "/5.png" },
+    { text: "ParaPixel understood our SaaS vision and delivered a stable, scalable platform.", author: "Pratul Chandra, CEO @ChampionsPrep", img: "/6.png" },
+    { text: "Strong engineering and clean execution. ParaPixel delivered exactly what we needed.", author: "Sinan C P, Founder @Nanis", img: "/7.png" },
+    { text: "The patient management system is efficient and easy to use. Very satisfied with ParaPixel.", author: "Dr. Subrahmanya Hegde @Sushruta Vitality Hub", img: "/8.png" },
+];
+
+const clients = ["DARKELK", "CHAMPIONSPREP", "ALLEN", "SUSHRUTA", "SANDHYA FOODS", "NANIS", "CONVERSO", "MCG CLOUD"];
+
 const stickers = [
     { text: "★ AWWWARDS", color: "bg-[#00ffff]", rot: "-rotate-12", top: "15%", left: "5%" },
     { text: "100% FRESH", color: "bg-[#ccff00]", rot: "rotate-6", top: "18%", right: "5%" },
@@ -57,42 +72,43 @@ const stickers = [
 export default function Home() {
   const container = useRef();
   
-  // Refs
-  const menuRef = useRef();
   const menuBgRef = useRef();   
   const menuCursorRef = useRef(); 
   const menuImageRef = useRef();  
   const menuTextRef = useRef();   
-  
   const stuffTextRef = useRef();
   const lastStuffHover = useRef(0);
   
-  // Scroll Refs
-  const workRef = useRef();
-  const workSliderRef = useRef();
+  // SECTION REFS
+  const workSectionRef = useRef(); 
+  const workTrackRef = useRef();   
   const processRef = useRef(); 
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeMenuImg, setActiveMenuImg] = useState(null);
 
-  // GSAP QuickTo for Menu Cursor
   const xTo = useRef();
   const yTo = useRef();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  // --- SCROLL LOCK FIX ---
+  // --- SYNC LENIS SCROLL WITH GSAP ---
+  const lenis = useLenis(({ scroll }) => {
+     ScrollTrigger.update();
+  });
+
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden'; 
+      if(lenis) lenis.stop();
     } else {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      if(lenis) lenis.start();
     }
-  }, [isMenuOpen]);
+  }, [isMenuOpen, lenis]);
   
-  // --- MOUSE SETUP FOR MENU PREVIEW ---
   useGSAP(() => {
     xTo.current = gsap.quickTo(menuCursorRef.current, "x", { duration: 0.4, ease: "power3" });
     yTo.current = gsap.quickTo(menuCursorRef.current, "y", { duration: 0.4, ease: "power3" });
@@ -100,16 +116,14 @@ export default function Home() {
   }, { scope: container });
 
   const handleMouseMove = (e) => {
-    // Menu Cursor Logic
     if (isMenuOpen && xTo.current && yTo.current) {
         xTo.current(e.clientX);
         yTo.current(e.clientY);
         if(menuImageRef.current) gsap.to(menuImageRef.current, { rotation: (e.movementX * 0.5), duration: 0.5 });
     }
-    // Hero Text Skew Logic
-    const heroLine = container.current?.querySelector(".hero-line");
-    if (heroLine && !isMenuOpen) {
-        gsap.to(heroLine, { skewX: -e.movementX * 0.05, duration: 0.5, ease: "power2.out", overwrite: "auto" });
+    if (!isMenuOpen) {
+        const heroLine = container.current?.querySelector(".hero-line");
+        if(heroLine) gsap.to(heroLine, { skewX: -e.movementX * 0.05, duration: 0.5, ease: "power2.out", overwrite: "auto" });
     }
   };
 
@@ -128,11 +142,14 @@ export default function Home() {
     }
   };
 
-  // --- ANIMATIONS ---
   useGSAP(() => {
+    // FORCE REFRESH: Fixes the race condition where layout isn't ready on refresh
+    const timer = setTimeout(() => {
+        ScrollTrigger.refresh();
+    }, 100);
+
     const tl = gsap.timeline({ delay: 0.2 });
     
-    // HERO REVEAL
     gsap.set([".nav-item", ".hero-reveal", ".stuff-wrapper", ".caution-strip"], { autoAlpha: 0 });
     tl.to(".nav-item", { autoAlpha: 1, y: 0, stagger: 0.1, duration: 1, ease: "power4.out" })
       .fromTo(".hero-reveal", { y: 150, rotateX: 45, autoAlpha: 0 }, { y: 0, rotateX: 0, autoAlpha: 1, stagger: 0.1, duration: 1.2, ease: "power3.out" }, "-=0.8")
@@ -140,86 +157,93 @@ export default function Home() {
       .from(".sticker", { scale: 0, rotation: 180, stagger: 0.1, duration: 0.8, ease: "back.out(1.7)" }, "-=1")
       .to(".caution-strip", { y: 0, autoAlpha: 1, duration: 1, ease: "power4.out" }, "-=0.8");
 
-    // MENU OPEN/CLOSE ANIMATION
-    if (isMenuOpen) {
-        // 1. Expand Background
-        gsap.to(menuBgRef.current, { clipPath: "circle(150% at 100% 0%)", duration: 1, ease: "power4.inOut" });
-        // 2. Show Container (Delayed)
-        gsap.to(menuTextRef.current, { autoAlpha: 1, duration: 0.1, delay: 0.1 });
-        // 3. Slide Up Items
-        gsap.fromTo(".menu-link-item", 
-            { y: 100, opacity: 0 }, 
-            { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power3.out", delay: 0.3 }
-        );
-    } else {
-        // Close
-        gsap.to(menuBgRef.current, { clipPath: "circle(0% at 100% 0%)", duration: 0.8, ease: "power4.inOut" });
-        gsap.to(menuTextRef.current, { autoAlpha: 0, duration: 0.3 });
-    }
-
-    // --- GLOBAL FADE UP ---
-    ScrollTrigger.refresh();
-    gsap.utils.toArray('.fade-up').forEach((elem) => {
-        gsap.fromTo(elem, 
-            { y: 60, opacity: 0 },
-            { 
-                y: 0, 
-                opacity: 1, 
-                duration: 1, 
-                ease: "power3.out",
-                scrollTrigger: {
-                    trigger: elem,
-                    start: "top 85%", 
-                    toggleActions: "play none none reverse" 
-                }
-            }
-        );
+    ScrollTrigger.batch(".fade-up", {
+        start: "top 85%",
+        onEnter: batch => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out" }),
+        onLeaveBack: batch => gsap.to(batch, { opacity: 0, y: 60, stagger: 0.1, duration: 0.5 })
     });
+    gsap.set(".fade-up", { y: 60, opacity: 0 });
 
-    // --- WORK SECTION (ROBUST HORIZONTAL SCROLL) ---
-    // Width Calculation: 1 Intro Panel + N Projects + 1 Outro Panel
-    const totalPanels = projects.length + 2; 
+    // --- WORK SECTION (PIXEL-BASED MATH FIX) ---
+    // This calculates the exact pixel width of the horizontal scroll.
+    // It prevents "blank space" because we move exactly as much as we exist.
     
-    gsap.to(workSliderRef.current, {
-        xPercent: -100 * (totalPanels - 1), 
-        ease: "none",
-        scrollTrigger: {
-            trigger: workRef.current,
-            pin: true,
-            scrub: 1,
-            // Pin for exactly the width of the content
-            end: () => "+=" + workSliderRef.current.offsetWidth, 
-            invalidateOnRefresh: true,
-            anticipatePin: 1
-        }
+    const track = workTrackRef.current;
+    
+    // Function to calculate exact movement needed
+    // (Total Width of Scrollable Content) - (1 Viewport Width)
+    const getScrollAmount = () => -(track.scrollWidth - window.innerWidth);
+
+    const tween = gsap.to(track, {
+      x: getScrollAmount, // Use 'x' pixels instead of % for perfect precision
+      ease: "none",
     });
 
-    // --- PROCESS SECTION (PINNED STACK) ---
+    ScrollTrigger.create({
+      trigger: workSectionRef.current,
+      start: "top top",
+      // The duration of the PIN matches the DISTANCE of the scroll exactly.
+      end: () => `+=${track.scrollWidth - window.innerWidth}`, 
+      pin: true,
+      animation: tween,
+      scrub: 1, 
+      invalidateOnRefresh: true, // Recalculate on window resize
+    });
+
+    // --- TESTIMONIALS VELOCITY MARQUEE ---
+    const marqueeTween = gsap.to(".testimonial-track", {
+      xPercent: -50,
+      ease: "none",
+      duration: 30, 
+      repeat: -1
+    });
+
+    ScrollTrigger.create({
+      trigger: "#testimonials",
+      start: "top bottom",
+      end: "bottom top",
+      onUpdate: (self) => {
+         const velocity = Math.abs(self.getVelocity());
+         const targetTimeScale = 1 + (velocity / 50);
+         gsap.to(marqueeTween, { timeScale: targetTimeScale, duration: 0.2, overwrite: true });
+         gsap.delayedCall(0.2, () => { gsap.to(marqueeTween, { timeScale: 1, duration: 0.5 }); });
+      }
+    });
+
     const stackCards = gsap.utils.toArray(".process-card");
     const processTl = gsap.timeline({
         scrollTrigger: {
             trigger: processRef.current,
             start: "top top",
-            end: "+=3000", // Drag out the scroll distance for effect
+            end: "+=3000", 
             scrub: true,
             pin: true,
             anticipatePin: 1
         }
     });
-
     stackCards.forEach((card, i) => {
-        if(i === 0) return; // Skip first card (it's the base)
+        if(i === 0) return; 
         processTl.fromTo(card, { yPercent: 100 }, { yPercent: 0, ease: "none" });
     });
 
-    // MARQUEES
     document.querySelectorAll('.marquee-inner').forEach((marquee, i) => {
-        gsap.to(marquee, { xPercent: -50, repeat: -1, duration: 10 + i, ease: "linear" });
+        gsap.to(marquee, { xPercent: -50, repeat: -1, duration: 15 + i, ease: "linear" });
     });
 
+    return () => clearTimeout(timer); // Cleanup
+  }, { scope: container });
+
+  useGSAP(() => {
+    if (isMenuOpen) {
+        gsap.to(menuBgRef.current, { clipPath: "circle(150% at 100% 0%)", duration: 1, ease: "power4.inOut" });
+        gsap.to(menuTextRef.current, { autoAlpha: 1, duration: 0.1, delay: 0.1 });
+        gsap.fromTo(".menu-link-item", { y: 100, opacity: 0 }, { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power3.out", delay: 0.3 });
+    } else {
+        gsap.to(menuBgRef.current, { clipPath: "circle(0% at 100% 0%)", duration: 0.8, ease: "power4.inOut" });
+        gsap.to(menuTextRef.current, { autoAlpha: 0, duration: 0.3 });
+    }
   }, { scope: container, dependencies: [isMenuOpen] });
 
-  // --- SERVICE CARD HOVER EFFECTS ---
   const handleServiceEnter = (e) => {
     gsap.to(e.currentTarget, { rotation: 0, scale: 1.05, zIndex: 10, duration: 0.4 });
     gsap.to(e.currentTarget.querySelector('.service-bg'), { autoAlpha: 0.4, duration: 0.4 });
@@ -237,49 +261,33 @@ export default function Home() {
       
       <CustomCursor />
 
-      {/* 3D SCENE BACKGROUND */}
-      <div className="fixed inset-0 z-[-1] pointer-events-none bg-[#fdfbf7]">
-        <SceneContainer />
-      </div>
-      <div className="noise-overlay fixed inset-0 z-0 opacity-40 pointer-events-none mix-blend-overlay"></div>
+      {/* UTILS */}
+      <div className="fixed inset-0 z-[-1] bg-[#fdfbf7]"><SceneContainer /></div>
 
-      {/* --- MENU OVERLAY --- */}
-      {/* 1. Yellow Background Layer */}
-      <div ref={menuBgRef} className="fixed inset-0 z-[9990] bg-[#ccff00] pointer-events-none" style={{ clipPath: "circle(0% at 100% 0%)" }} />
-      
-      {/* 2. Menu Content (Links) */}
+      {/* MENU */}
+      <div ref={menuBgRef} className="fixed inset-0 z-[9990] bg-[#ccff00] pointer-events-none will-change-[clip-path]" style={{ clipPath: "circle(0% at 100% 0%)" }} />
       <div ref={menuTextRef} className="fixed inset-0 z-[9991] flex flex-col items-center justify-center pointer-events-none opacity-0">
          <div className="flex flex-col gap-2 md:gap-4 text-center w-full pointer-events-auto">
            {menuItems.map((item, i) => (
              <div key={i} className="menu-link-item overflow-hidden relative h-[15vw] md:h-[10vw] flex items-center justify-center w-full">
                 <Link href={item.href} onClick={toggleMenu} className="group relative block w-full h-full cursor-pointer" onMouseEnter={() => setActiveMenuImg(item.img)} onMouseLeave={() => setActiveMenuImg(null)}>
-                    {/* Primary Text (Black) - Slides Up */}
-                    <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full">
-                         <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">
-                            {item.label}
-                        </h2>
+                    <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
+                         <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
                     </div>
-                    {/* Secondary Text (White with Stroke) - Slides In */}
-                    <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo translate-y-full group-hover:translate-y-0">
-                        <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-white [-webkit-text-stroke:2px_black]">
-                            {item.label}
-                        </h2>
+                    <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo translate-y-full group-hover:translate-y-0 will-change-transform">
+                        <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-white [-webkit-text-stroke:2px_black]">{item.label}</h2>
                     </div>
                 </Link>
              </div>
            ))}
          </div>
       </div>
-      
-      {/* 3. Menu Image Preview Cursor */}
       <div ref={menuCursorRef} className="fixed top-0 left-0 w-[60vw] md:w-[500px] aspect-video pointer-events-none z-[9995] rounded-2xl overflow-hidden border-4 border-black shadow-[20px_20px_0px_black]" style={{ opacity: isMenuOpen && activeMenuImg ? 1 : 0, transition: 'opacity 0.2s ease-out' }}>
         <img ref={menuImageRef} src={activeMenuImg || null} alt="Preview" className="w-full h-full object-cover" />
       </div>
 
-      {/* --- HEADER / NAV --- */}
-      <header className="fixed top-0 left-0 w-full p-6 md:p-12 flex justify-between items-center z-[9980] mix-blend-difference text-white pointer-events-none">
-        
-        {/* LOGO */}
+      {/* NAV */}
+      <header className="fixed top-0 left-0 w-full p-6 md:p-12 flex justify-between items-center z-[10000] mix-blend-difference text-white pointer-events-none">
         <div className="nav-item flex items-center gap-4 cursor-pointer pointer-events-auto group hover-trigger">
           <div className="relative w-12 h-12 md:w-16 md:h-16 transition-transform duration-500 group-hover:rotate-180">
              <Image src="/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
@@ -289,15 +297,12 @@ export default function Home() {
             <span className="font-funky text-xl md:text-3xl">Pixel</span>
           </div>
         </div>
-
-        {/* CTA BUTTON */}
-        <div className="nav-item absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block pointer-events-auto">
-            <Link href="#contact" className="px-8 py-3 bg-white text-black rounded-full font-mono font-bold text-lg hover:bg-[#ccff00] hover:scale-110 hover:-rotate-2 transition-all duration-300 shadow-[0px_0px_20px_rgba(255,255,255,0.2)] hover-trigger">
-                START PROJECT
-            </Link>
+        
+        {/* CENTER BUTTON - HIDES ON MENU */}
+        <div className={`nav-item absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block pointer-events-auto transition-opacity duration-300 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+            <Link href="#contact" className="px-8 py-3 bg-white text-black rounded-full font-mono font-bold text-lg hover:bg-[#ccff00] hover:scale-110 hover:-rotate-2 transition-all duration-300 shadow-[0px_0px_20px_rgba(255,255,255,0.2)] hover-trigger">START PROJECT</Link>
         </div>
 
-        {/* BURGER BUTTON */}
         <button onClick={toggleMenu} className="nav-item pointer-events-auto group w-12 h-12 md:w-14 md:h-14 flex flex-col gap-1.5 items-center justify-center bg-white rounded-full hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(255,255,255,0.5)] hover-trigger">
           <span className={`block w-5 md:w-6 h-0.5 bg-black transition-all ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
           <span className={`block w-5 md:w-6 h-0.5 bg-black transition-all ${isMenuOpen ? 'opacity-0' : ''}`} />
@@ -305,7 +310,7 @@ export default function Home() {
         </button>
       </header>
 
-      {/* --- HERO SECTION --- */}
+      {/* HERO */}
       <section className="relative w-full h-[100dvh] flex flex-col items-center justify-center overflow-hidden z-10 pointer-events-none pb-20">
         <div className="hero-reveal hero-line font-funky text-[15vw] md:text-[12vw] leading-none z-10 mix-blend-overlay opacity-50 text-stroke-black text-transparent md:text-black">WE BUILD</div>
         {stickers.map((s, i) => (
@@ -314,18 +319,26 @@ export default function Home() {
         <div className="hero-reveal stuff-wrapper relative z-20 mt-2 md:mt-4 cursor-pointer group pointer-events-auto" onMouseEnter={handleStuffHover}>
           <div ref={stuffTextRef} className="stuff-text relative inline-block text-[25vw] md:text-[22vw] leading-[0.8] font-funky tracking-tighter text-[#ff0055] drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">STUFF</div>
         </div>
-        
-        {/* Mobile CTA */}
         <div className="md:hidden absolute bottom-60 z-30 pointer-events-auto hero-reveal">
             <Link href="#contact" className="px-10 py-4 bg-black text-[#ccff00] rounded-full font-black text-xl hover:scale-110 hover:-rotate-2 transition-transform shadow-[5px_5px_0px_#ccff00] hover-trigger">START PROJECT</Link>
         </div>
-
-        <div className="caution-strip absolute bottom-24 w-full bg-[#ccff00] border-y-4 border-black py-3 md:py-4 rotate-[-2deg] scale-110 z-30 overflow-hidden shadow-2xl pointer-events-auto">
-          <div className="flex whitespace-nowrap animate-marquee">{[...Array(10)].map((_, i) => (<span key={i} className="text-xl md:text-3xl font-black mx-4 tracking-widest text-black font-mono">/// CREATIVITY OVERLOAD ///</span>))}</div>
+        
+        {/* HERO STRIP */}
+        <div className="caution-strip absolute bottom-10 w-full bg-[#ccff00] border-y-4 border-black py-3 md:py-4 rotate-[-2deg] scale-110 z-30 overflow-hidden shadow-[0_0_30px_#ccff00] transition-all duration-300 hover:rotate-0 hover:scale-100 hover:bg-black hover:text-[#ccff00] group pointer-events-auto cursor-help">
+          <div className="flex whitespace-nowrap animate-marquee">
+            {[...Array(10)].map((_, i) => (
+              <span key={i} className="flex items-center gap-4 text-xl md:text-3xl font-black mx-4 tracking-widest text-black group-hover:text-[#ccff00] font-mono">
+                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 animate-pulse">
+                   <path fillRule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
+                 </svg>
+                 CAUTION: CREATIVITY OVERLOAD
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* --- SERVICES SECTION --- */}
+      {/* SERVICES */}
       <section id="services" className="relative w-full bg-black z-20 py-20 md:py-40 overflow-hidden rounded-t-[3rem] border-t-4 border-[#ccff00]">
         <div className="text-center mb-20 md:mb-32 px-4 fade-up"><h2 className="font-funky text-[15vw] md:text-[12vw] leading-none"><span className="text-[#ccff00]">THE</span><br className="md:hidden" /><span className="text-transparent [-webkit-text-stroke:1px_#ccff00] md:[-webkit-text-stroke:2px_#ccff00] ml-0 md:ml-4">MENU</span></h2></div>
         <div className="max-w-7xl mx-auto px-4 flex flex-col gap-10">
@@ -349,16 +362,14 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- WORK SECTION (ROBUST HORIZONTAL) --- */}
-      <section id="work" ref={workRef} className="relative z-30 bg-[#050505] overflow-hidden h-screen">
-         {/* Container Width = 100vw * Number of Panels */}
-         <div ref={workSliderRef} className="flex flex-nowrap h-full" style={{ width: `${(projects.length + 2) * 100}vw` }}>
-            {/* 1. Intro Panel */}
+      {/* WORK SECTION (FIXED: Pixel Math + Overflow Hidden) */}
+      <section ref={workSectionRef} id="work" className="relative z-30 bg-black h-screen overflow-hidden">
+         {/* Calculated Width: (5 projects + 2 panels) = 7 * 100vw = 700vw */}
+         <div ref={workTrackRef} className="flex flex-nowrap h-full" style={{ width: `${(projects.length + 2) * 100}vw` }}>
             <div className="work-panel w-[100vw] h-screen flex flex-col justify-center items-center border-r border-[#222] bg-black shrink-0">
                 <h2 className="text-[15vw] font-funky text-white leading-none fade-up">THE<br/><span className="text-stroke-white text-transparent">WORK</span></h2>
                 <div className="animate-bounce text-6xl mt-10 text-white fade-up">→</div>
             </div>
-            {/* 2. Project Panels */}
             {projects.map((project, i) => (
                 <div key={i} className="work-panel w-[100vw] h-screen flex flex-col justify-center items-center border-r border-[#222] relative bg-[#0a0a0a] shrink-0">
                     <Link href={project.url} target="_blank" className="relative w-[90vw] md:w-[60vw] h-[40vh] md:h-[60vh] overflow-hidden cursor-none group bg-[#111] flex items-center justify-center project-hover fade-up">
@@ -371,7 +382,6 @@ export default function Home() {
                     </div>
                 </div>
             ))}
-            {/* 3. Outro Panel */}
             <div className="work-panel w-[100vw] h-screen flex flex-col justify-center items-center border-r border-[#222] bg-[#ccff00] shrink-0">
                 <h2 className="text-[10vw] font-black leading-none text-black mb-10 text-center fade-up">WANT<br/>MORE?</h2>
                 <Link href="#contact" className="px-10 py-5 bg-black text-white rounded-full font-mono text-xl hover:scale-110 transition-transform hover-trigger fade-up">CONTACT US</Link>
@@ -379,7 +389,43 @@ export default function Home() {
          </div>
       </section>
 
-      {/* --- PROCESS SECTION (PINNED) --- */}
+      {/* TESTIMONIALS */}
+      <section id="testimonials" className="relative z-30 bg-[#f5f5f5] py-40 overflow-hidden border-t-4 border-black">
+          <h2 className="text-[12vw] font-funky leading-none text-center mb-20 fade-up">THE <span className="text-[#ff0055]">HYPE</span></h2>
+          
+          <div className="testimonial-track flex w-max">
+              {[...Array(2)].map((_, loop) => (
+                  <div key={loop} className="flex gap-10 mx-10">
+                      {testimonials.map((t, i) => (
+                          <div key={i} className="w-[80vw] md:w-[40vw] p-10 bg-white border-4 border-black shadow-[15px_15px_0px_black] shrink-0 hover:scale-105 transition-transform">
+                              <p className="text-2xl md:text-4xl font-black uppercase leading-tight mb-8">"{t.text}"</p>
+                              <div className="flex items-center gap-6">
+                                  {/* Profile Image */}
+                                  <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-black shrink-0">
+                                      <Image src={t.img} alt={t.author} fill className="object-cover" />
+                                  </div>
+                                  <p className="font-mono font-bold text-lg">/// {t.author}</p>
+                              </div>
+                          </div>
+                      ))}
+                  </div>
+              ))}
+          </div>
+
+          <div className="mt-40 bg-black text-white border-y-8 border-[#ccff00] py-8 rotate-1 scale-110">
+              <div className="marquee-inner flex whitespace-nowrap">
+                  {[...Array(10)].map((_, i) => (
+                      <span key={i} className="flex items-center gap-20 mx-10">
+                          {clients.map((client, j) => (
+                              <span key={j} className="text-4xl md:text-6xl font-funky opacity-50 hover:opacity-100 transition-opacity cursor-crosshair">{client}</span>
+                          ))}
+                      </span>
+                  ))}
+              </div>
+          </div>
+      </section>
+
+      {/* PROCESS */}
       <section id="process" ref={processRef} className="relative z-40 bg-black h-screen overflow-hidden">
          <div className="w-full h-full relative">
             <div className="process-card absolute inset-0 w-full h-full flex flex-col justify-center items-center bg-black z-0">
@@ -404,7 +450,7 @@ export default function Home() {
          </div>
       </section>
 
-      {/* --- CONTACT SECTION --- */}
+      {/* CONTACT */}
       <section id="contact" className="relative z-50 bg-[#ccff00] text-black py-40 px-4 md:px-20 min-h-screen flex flex-col justify-center">
          <h2 className="text-[12vw] font-funky leading-none mb-10 fade-up">HOLLER<br/>AT US</h2>
          <div className="w-full max-w-5xl flex flex-col gap-10">
@@ -419,7 +465,7 @@ export default function Home() {
          </div>
       </section>
 
-      {/* --- FOOTER --- */}
+      {/* FOOTER */}
       <footer className="relative z-50 bg-black text-white py-20 text-center border-t-8 border-white overflow-hidden">
           <h2 className="text-[10vw] font-funky leading-none mb-8 text-[#ccff00] mix-blend-difference fade-up">PARAPIXEL</h2>
           <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-20 font-mono text-xl text-white fade-up">
