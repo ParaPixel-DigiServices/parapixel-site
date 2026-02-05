@@ -37,7 +37,7 @@ const menuItems = [
 ];
 
 const services = [
-  { id: "01", title: "WEB DESIGN", desc: "IMMERSIVE 3D", tags: "WEBGL /// THREE.JS /// REACT /// NEXT.JS ///", img: cld("web"), color: "text-[#ccff00]", rotate: "md:rotate-2" },
+  { id: "01", title: "WEB DESIGN & DEV", desc: "IMMERSIVE 3D", tags: "WEBGL /// THREE.JS /// REACT /// NEXT.JS ///", img: cld("web"), color: "text-[#ccff00]", rotate: "md:rotate-2" },
   { id: "02", title: "MOBILE APPS", desc: "NATIVE SYSTEMS", tags: "IOS /// ANDROID /// FLUTTER /// REACT NATIVE ///", img: cld("mobile"), color: "text-[#ff0055]", rotate: "md:-rotate-1" },
   { id: "03", title: "SEO GROWTH", desc: "DOMINANCE", tags: "ANALYTICS /// ADS /// RANKING /// STRATEGY ///", img: cld("seo"), color: "text-[#00ffff]", rotate: "md:rotate-3" },
   { id: "04", title: "SAAS BUILD", desc: "CLOUD SYSTEMS", tags: "AWS /// DOCKER /// NEXT.JS /// SUPABASE ///", img: cld("saas"), color: "text-[#ffffff]", rotate: "md:-rotate-2" },
