@@ -1,5 +1,5 @@
 'use client';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Float, Edges } from '@react-three/drei';
 import { useRef, useState, useMemo } from 'react';
 import * as THREE from 'three';
@@ -58,6 +58,43 @@ function AnimeKnot({ position, scale, color, speed = 1 }) {
   );
 }
 
+// --- NEW COMPONENT: Handles Mobile/Desktop Logic ---
+function ResponsiveKnots() {
+  const { viewport } = useThree();
+  
+  // If viewport width is less than 6 units, treat as mobile
+  const isMobile = viewport.width < 6.5;
+
+  if (isMobile) {
+    // --- MOBILE: SINGLE CENTERED KNOT ---
+    return (
+        <AnimeKnot 
+            position={[0, 0, 0]} 
+            color="#4ecca3" // Brand Neon Green
+            speed={1.2} 
+            scale={2.2} // Make it nice and big
+        />
+    );
+  }
+
+  // --- DESKTOP: ORIGINAL SCATTERED KNOTS ---
+  return (
+    <group>
+       {/* 1. HERO - TOP RIGHT (Teal) */}
+       <AnimeKnot position={[9, 5, -8]} color="#4ecdc4" speed={1.0} scale={2.5} /> 
+       
+       {/* 2. ANCHOR - BOTTOM LEFT (Pink) */}
+       <AnimeKnot position={[-10, -6, -6]} color="#ff6b6b" speed={0.8} scale={2.2} /> 
+       
+       {/* 3. DEPTH - FAR TOP LEFT (Yellow) */}
+       <AnimeKnot position={[-14, 9, -15]} color="#ffe66d" speed={0.5} scale={1.8} /> 
+       
+       {/* 4. ACCENT - MID RIGHT EDGE (Lavender) */}
+       <AnimeKnot position={[16, -2, -12]} color="#a29bfe" speed={0.6} scale={1.5} /> 
+    </group>
+  );
+}
+
 export default function Scene() {
   return (
     <Canvas 
@@ -72,19 +109,9 @@ export default function Scene() {
       <directionalLight position={[5, 5, 5]} intensity={1.5} />
       <directionalLight position={[-5, -5, -5]} intensity={1.0} />
 
-      <group>
-        {/* 1. HERO - TOP RIGHT (Teal) */}
-        <AnimeKnot position={[9, 5, -8]} color="#4ecdc4" speed={1.0} scale={2.5} /> 
-        
-        {/* 2. ANCHOR - BOTTOM LEFT (Pink) */}
-        <AnimeKnot position={[-10, -6, -6]} color="#ff6b6b" speed={0.8} scale={2.2} /> 
-        
-        {/* 3. DEPTH - FAR TOP LEFT (Yellow) */}
-        <AnimeKnot position={[-14, 9, -15]} color="#ffe66d" speed={0.5} scale={1.8} /> 
-        
-        {/* 4. ACCENT - MID RIGHT EDGE (Lavender) */}
-        <AnimeKnot position={[16, -2, -12]} color="#a29bfe" speed={0.6} scale={1.5} /> 
-      </group>
+      {/* Logic moved inside Canvas so useThree works */}
+      <ResponsiveKnots />
+
     </Canvas>
   );
 }
