@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
 
 // --- CONFIG ---
 const CONTACT_EMAIL = "hello@parapixel.in.net";
-const WEB3FORMS_ACCESS_KEY = "ddca9965-2c92-4368-8f28-1008b9e4f313"; // <--- PASTE KEY HERE
+const WEB3FORMS_ACCESS_KEY = "ddd0f2b5-2482-459c-904b-687910c364b0"; // <--- PASTE KEY HERE
 const CAL_COM_LINK = "https://cal.com/parapixel/intro"; 
 
 // --- DATA ---
