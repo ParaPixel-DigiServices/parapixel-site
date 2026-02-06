@@ -8,6 +8,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLenis } from '@studio-freight/react-lenis';
+import AIChatbot from '@/components/ChatBot';
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -15,6 +16,8 @@ if (typeof window !== "undefined") {
 
 // --- CONFIG ---
 const CONTACT_EMAIL = "hello@parapixel.in.net";
+const WEB3FORMS_ACCESS_KEY = "ddca9965-2c92-4368-8f28-1008b9e4f313"; // <--- PASTE KEY HERE
+const CAL_COM_LINK = "https://cal.com/parapixel/intro"; 
 
 // --- DATA ---
 const menuItems = [
@@ -22,7 +25,7 @@ const menuItems = [
   { label: "WORK", img: "/works.png", href: "#work" },
   { label: "REVIEWS", img: "/reviews.png", href: "#testimonials" },
   { label: "PROCESS", img: "/process.png", href: "#process" },
-  { label: "CONTACT", img: "/contact.png", href: "#contact" }
+  { label: "CONTACT", img: "/contact.png", action: "contact" }
 ];
 
 const services = [
@@ -69,6 +72,157 @@ const stickers = [
     { text: "PURE CHAOS", color: "bg-[#ffaa00]", rot: "rotate-3", bottom: "18%", left: "50%", transform: "translateX(-50%)" },
 ];
 
+// --- CONTACT FORM COMPONENT ---
+function ContactOverlay({ isOpen, onClose }) {
+    const overlayRef = useRef();
+    const contentRef = useRef();
+    const [step, setStep] = useState(1);
+    const [status, setStatus] = useState("IDLE");
+    
+    // NEW: Currency State
+    const [currency, setCurrency] = useState("INR"); // Default to INR
+
+    useGSAP(() => {
+        if (isOpen) {
+            gsap.to(overlayRef.current, { clipPath: "circle(150% at 100% 0%)", duration: 1, ease: "power4.inOut" });
+            gsap.fromTo(contentRef.current, { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.3, ease: "power3.out" });
+        } else {
+            gsap.to(overlayRef.current, { clipPath: "circle(0% at 100% 0%)", duration: 0.8, ease: "power4.inOut" });
+        }
+    }, [isOpen]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setStatus("SENDING");
+        
+        const formData = new FormData(e.target);
+        formData.append("access_key", WEB3FORMS_ACCESS_KEY);
+        // Append currency explicitly so you know which one they picked
+        formData.append("currency_preference", currency); 
+
+        try {
+            const res = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                setStatus("SUCCESS");
+                setTimeout(() => setStep(2), 1500); 
+            } else {
+                setStatus("ERROR");
+            }
+        } catch (err) {
+            setStatus("ERROR");
+        }
+    };
+
+    if (!isOpen && status === "IDLE") return null;
+
+    return (
+        <div ref={overlayRef} className="fixed inset-0 z-[11000] bg-black text-white overflow-hidden flex flex-col pointer-events-auto" style={{ clipPath: "circle(0% at 100% 0%)" }}>
+            <button onClick={onClose} className="absolute top-8 right-8 md:top-12 md:right-12 w-14 h-14 bg-white rounded-full flex items-center justify-center z-50 hover:scale-110 transition-transform cursor-pointer">
+                <span className="text-black font-black text-xl">X</span>
+            </button>
+
+            <div ref={contentRef} className="w-full h-full flex flex-col items-center justify-center p-4 md:p-20 overflow-y-auto">
+                {step === 1 && (
+                    <div className="w-full max-w-4xl">
+                        <h2 className="text-[10vw] md:text-[6vw] font-funky leading-none mb-10 text-[#ccff00]">LETS <br/> COOK</h2>
+                        
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-full">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="flex flex-col gap-2">
+                                    <label className="font-mono text-[#ccff00]">01. WHAT'S YOUR NAME?</label>
+                                    <input required name="name" type="text" placeholder="John Doe" className="bg-transparent border-b-2 border-white/20 py-4 text-2xl md:text-4xl font-bold focus:border-[#ccff00] outline-none transition-colors placeholder:text-white/20" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <label className="font-mono text-[#ccff00]">02. WHAT'S YOUR EMAIL?</label>
+                                    <input required name="email" type="email" placeholder="john@example.com" className="bg-transparent border-b-2 border-white/20 py-4 text-2xl md:text-4xl font-bold focus:border-[#ccff00] outline-none transition-colors placeholder:text-white/20" />
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <label className="font-mono text-[#ccff00]">03. TELL US ABOUT THE PROJECT</label>
+                                <textarea required name="message" rows="3" placeholder="We need a 3D website that looks illegal..." className="bg-transparent border-b-2 border-white/20 py-4 text-xl md:text-2xl font-bold focus:border-[#ccff00] outline-none transition-colors placeholder:text-white/20 resize-none"></textarea>
+                            </div>
+
+                            <div className="flex flex-col gap-4">
+                                <div className="flex justify-between items-end">
+                                    <label className="font-mono text-[#ccff00]">04. BUDGET RANGE</label>
+                                    {/* Currency Toggle */}
+                                    <div className="flex gap-4 font-mono text-sm">
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setCurrency("INR")}
+                                            className={`px-4 py-2 rounded-full border border-white transition-colors ${currency === 'INR' ? 'bg-white text-black' : 'text-white hover:bg-white/20'}`}
+                                        >
+                                            INR (₹)
+                                        </button>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => setCurrency("USD")}
+                                            className={`px-4 py-2 rounded-full border border-white transition-colors ${currency === 'USD' ? 'bg-white text-black' : 'text-white hover:bg-white/20'}`}
+                                        >
+                                            USD ($)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <select name="budget" className="bg-transparent border-b-2 border-white/20 py-4 text-xl md:text-3xl font-bold focus:border-[#ccff00] outline-none transition-colors text-white cursor-pointer appearance-none rounded-none">
+                                    {currency === "INR" ? (
+                                        <>
+                                            <option value="10k-50k INR" className="bg-black">₹10k - ₹50k</option>
+                                            <option value="50k-1L INR" className="bg-black">₹50k - ₹1L</option>
+                                            <option value="1L-3L INR" className="bg-black">₹1L - ₹3L</option>
+                                            <option value="3L-5L INR" className="bg-black">₹3L - ₹5L</option>
+                                            <option value="5L+ INR" className="bg-black">₹5L+</option>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <option value="1k-3k USD" className="bg-black">$1k - $3k</option>
+                                            <option value="3k-5k USD" className="bg-black">$3k - $5k</option>
+                                            <option value="5k-10k USD" className="bg-black">$5k - $10k</option>
+                                            <option value="10k-25k USD" className="bg-black">$10k - $25k</option>
+                                            <option value="25k+ USD" className="bg-black">$25k+</option>
+                                        </>
+                                    )}
+                                </select>
+                            </div>
+
+                            <button type="submit" disabled={status === "SENDING"} className="mt-10 px-12 py-6 bg-[#ccff00] text-black text-2xl font-black rounded-full hover:scale-105 hover:-rotate-1 transition-transform self-start disabled:opacity-50 disabled:cursor-not-allowed">
+                                {status === "IDLE" && "SEND IT →"}
+                                {status === "SENDING" && "SENDING..."}
+                                {status === "SUCCESS" && "SENT!"}
+                                {status === "ERROR" && "TRY AGAIN"}
+                            </button>
+                        </form>
+                    </div>
+                )}
+
+                {step === 2 && (
+                    <div className="w-full h-full flex flex-col items-center justify-center animate-in fade-in zoom-in duration-500">
+                        <div className="text-center mb-8">
+                            <h3 className="text-4xl md:text-6xl font-funky text-[#ccff00] mb-4">DATA RECEIVED.</h3>
+                            <p className="font-mono text-xl">Let's lock in a time to discuss details.</p>
+                        </div>
+                        <div className="w-full h-[600px] md:h-[700px] bg-white rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(204,255,0,0.3)] border-4 border-[#ccff00]">
+                            <iframe 
+                                src={CAL_COM_LINK} 
+                                width="100%" 
+                                height="100%" 
+                                frameBorder="0"
+                                title="Book a call"
+                            ></iframe>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 export default function Home() {
   const container = useRef();
   
@@ -79,26 +233,26 @@ export default function Home() {
   const stuffTextRef = useRef();
   const lastStuffHover = useRef(0);
   
-  // SECTION REFS
   const workSectionRef = useRef(); 
   const workTrackRef = useRef();   
   const processRef = useRef(); 
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false); 
   const [activeMenuImg, setActiveMenuImg] = useState(null);
 
   const xTo = useRef();
   const yTo = useRef();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleContact = () => { setIsContactOpen(!isContactOpen); setIsMenuOpen(false); };
 
-  // --- SYNC LENIS SCROLL WITH GSAP ---
   const lenis = useLenis(({ scroll }) => {
      ScrollTrigger.update();
   });
 
   useEffect(() => {
-    if (isMenuOpen) {
+    if (isMenuOpen || isContactOpen) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden'; 
       if(lenis) lenis.stop();
@@ -107,7 +261,7 @@ export default function Home() {
       document.documentElement.style.overflow = '';
       if(lenis) lenis.start();
     }
-  }, [isMenuOpen, lenis]);
+  }, [isMenuOpen, isContactOpen, lenis]);
   
   useGSAP(() => {
     xTo.current = gsap.quickTo(menuCursorRef.current, "x", { duration: 0.4, ease: "power3" });
@@ -143,13 +297,9 @@ export default function Home() {
   };
 
   useGSAP(() => {
-    // FORCE REFRESH: Fixes the race condition where layout isn't ready on refresh
-    const timer = setTimeout(() => {
-        ScrollTrigger.refresh();
-    }, 100);
+    const timer = setTimeout(() => { ScrollTrigger.refresh(); }, 100);
 
     const tl = gsap.timeline({ delay: 0.2 });
-    
     gsap.set([".nav-item", ".hero-reveal", ".stuff-wrapper", ".caution-strip"], { autoAlpha: 0 });
     tl.to(".nav-item", { autoAlpha: 1, y: 0, stagger: 0.1, duration: 1, ease: "power4.out" })
       .fromTo(".hero-reveal", { y: 150, rotateX: 45, autoAlpha: 0 }, { y: 0, rotateX: 0, autoAlpha: 1, stagger: 0.1, duration: 1.2, ease: "power3.out" }, "-=0.8")
@@ -164,40 +314,24 @@ export default function Home() {
     });
     gsap.set(".fade-up", { y: 60, opacity: 0 });
 
-    // --- WORK SECTION (PIXEL-BASED MATH FIX) ---
-    // This calculates the exact pixel width of the horizontal scroll.
-    // It prevents "blank space" because we move exactly as much as we exist.
-    
     const track = workTrackRef.current;
-    
-    // Function to calculate exact movement needed
-    // (Total Width of Scrollable Content) - (1 Viewport Width)
     const getScrollAmount = () => -(track.scrollWidth - window.innerWidth);
-
     const tween = gsap.to(track, {
-      x: getScrollAmount, // Use 'x' pixels instead of % for perfect precision
+      x: getScrollAmount,
       ease: "none",
     });
 
     ScrollTrigger.create({
       trigger: workSectionRef.current,
       start: "top top",
-      // The duration of the PIN matches the DISTANCE of the scroll exactly.
       end: () => `+=${track.scrollWidth - window.innerWidth}`, 
       pin: true,
       animation: tween,
       scrub: 1, 
-      invalidateOnRefresh: true, // Recalculate on window resize
+      invalidateOnRefresh: true, 
     });
 
-    // --- TESTIMONIALS VELOCITY MARQUEE ---
-    const marqueeTween = gsap.to(".testimonial-track", {
-      xPercent: -50,
-      ease: "none",
-      duration: 30, 
-      repeat: -1
-    });
-
+    const marqueeTween = gsap.to(".testimonial-track", { xPercent: -50, ease: "none", duration: 30, repeat: -1 });
     ScrollTrigger.create({
       trigger: "#testimonials",
       start: "top bottom",
@@ -230,7 +364,7 @@ export default function Home() {
         gsap.to(marquee, { xPercent: -50, repeat: -1, duration: 15 + i, ease: "linear" });
     });
 
-    return () => clearTimeout(timer); // Cleanup
+    return () => clearTimeout(timer);
   }, { scope: container });
 
   useGSAP(() => {
@@ -260,6 +394,9 @@ export default function Home() {
     <main ref={container} onMouseMove={handleMouseMove} className="relative w-full bg-transparent text-black overflow-x-hidden selection:bg-[#ccff00] selection:text-black cursor-none">
       
       <CustomCursor />
+      
+      {/* CONTACT OVERLAY */}
+      <ContactOverlay isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />
 
       {/* UTILS */}
       <div className="fixed inset-0 z-[-1] bg-[#fdfbf7]"><SceneContainer /></div>
@@ -270,14 +407,25 @@ export default function Home() {
          <div className="flex flex-col gap-2 md:gap-4 text-center w-full pointer-events-auto">
            {menuItems.map((item, i) => (
              <div key={i} className="menu-link-item overflow-hidden relative h-[15vw] md:h-[10vw] flex items-center justify-center w-full">
-                <Link href={item.href} onClick={toggleMenu} className="group relative block w-full h-full cursor-pointer" onMouseEnter={() => setActiveMenuImg(item.img)} onMouseLeave={() => setActiveMenuImg(null)}>
-                    <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
-                         <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
-                    </div>
-                    <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo translate-y-full group-hover:translate-y-0 will-change-transform">
-                        <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-white [-webkit-text-stroke:2px_black]">{item.label}</h2>
-                    </div>
-                </Link>
+                {item.action === 'contact' ? (
+                    <button onClick={toggleContact} className="group relative block w-full h-full cursor-pointer">
+                        <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
+                             <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
+                        </div>
+                        <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo translate-y-full group-hover:translate-y-0 will-change-transform">
+                            <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-white [-webkit-text-stroke:2px_black]">{item.label}</h2>
+                        </div>
+                    </button>
+                ) : (
+                    <Link href={item.href} onClick={toggleMenu} className="group relative block w-full h-full cursor-pointer" onMouseEnter={() => setActiveMenuImg(item.img)} onMouseLeave={() => setActiveMenuImg(null)}>
+                        <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
+                             <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
+                        </div>
+                        <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo translate-y-full group-hover:translate-y-0 will-change-transform">
+                            <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-white [-webkit-text-stroke:2px_black]">{item.label}</h2>
+                        </div>
+                    </Link>
+                )}
              </div>
            ))}
          </div>
@@ -298,9 +446,8 @@ export default function Home() {
           </div>
         </div>
         
-        {/* CENTER BUTTON - HIDES ON MENU */}
         <div className={`nav-item absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block pointer-events-auto transition-opacity duration-300 ${isMenuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-            <Link href="#contact" className="px-8 py-3 bg-white text-black rounded-full font-mono font-bold text-lg hover:bg-[#ccff00] hover:scale-110 hover:-rotate-2 transition-all duration-300 shadow-[0px_0px_20px_rgba(255,255,255,0.2)] hover-trigger">START PROJECT</Link>
+            <button onClick={toggleContact} className="px-8 py-3 bg-white text-black rounded-full font-mono font-bold text-lg hover:bg-[#ccff00] hover:scale-110 hover:-rotate-2 transition-all duration-300 shadow-[0px_0px_20px_rgba(255,255,255,0.2)] hover-trigger">START PROJECT</button>
         </div>
 
         <button onClick={toggleMenu} className="nav-item pointer-events-auto group w-12 h-12 md:w-14 md:h-14 flex flex-col gap-1.5 items-center justify-center bg-white rounded-full hover:scale-110 transition-transform duration-300 shadow-[0_0_20px_rgba(255,255,255,0.5)] hover-trigger">
@@ -320,7 +467,7 @@ export default function Home() {
           <div ref={stuffTextRef} className="stuff-text relative inline-block text-[25vw] md:text-[22vw] leading-[0.8] font-funky tracking-tighter text-[#ff0055] drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">STUFF</div>
         </div>
         <div className="md:hidden absolute bottom-60 z-30 pointer-events-auto hero-reveal">
-            <Link href="#contact" className="px-10 py-4 bg-black text-[#ccff00] rounded-full font-black text-xl hover:scale-110 hover:-rotate-2 transition-transform shadow-[5px_5px_0px_#ccff00] hover-trigger">START PROJECT</Link>
+            <button onClick={toggleContact} className="px-10 py-4 bg-black text-[#ccff00] rounded-full font-black text-xl hover:scale-110 hover:-rotate-2 transition-transform shadow-[5px_5px_0px_#ccff00] hover-trigger">START PROJECT</button>
         </div>
         
         {/* HERO STRIP */}
@@ -344,7 +491,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col gap-10">
             {services.map((service, i) => (
                 <div key={i} className="fade-up">
-                    <Link href="#contact" className={`group relative w-full border-4 border-white/20 bg-[#111] p-8 md:p-12 cursor-pointer transition-all duration-500 ease-out transform ${service.rotate} hover:rotate-0 hover:z-20 hover:border-white block hover-trigger`} onMouseEnter={handleServiceEnter} onMouseLeave={(e) => handleServiceLeave(e, service.rotate)}>
+                    <button onClick={toggleContact} className={`group relative w-full border-4 border-white/20 bg-[#111] p-8 md:p-12 cursor-pointer transition-all duration-500 ease-out transform ${service.rotate} hover:rotate-0 hover:z-20 hover:border-white block text-left hover-trigger`} onMouseEnter={handleServiceEnter} onMouseLeave={(e) => handleServiceLeave(e, service.rotate)}>
                         <div className="service-bg absolute inset-0 w-full h-full opacity-0 pointer-events-none z-0"><img src={service.img} className="w-full h-full object-cover grayscale opacity-30" alt="BG" /></div>
                         <div className="relative z-10 w-full flex flex-col">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-6 md:gap-0">
@@ -353,18 +500,17 @@ export default function Home() {
                             </div>
                             <div className="service-marquee h-0 overflow-hidden opacity-0 relative"><div className="pt-4 md:pt-8 w-full border-t border-white/10 mt-4"><div className="marquee-inner flex whitespace-nowrap w-fit"><span className={`text-2xl md:text-4xl font-mono font-bold mx-4 ${service.color}`}>{service.tags} {service.tags} {service.tags}</span><span className={`text-2xl md:text-4xl font-mono font-bold mx-4 ${service.color}`}>{service.tags} {service.tags} {service.tags}</span></div></div></div>
                         </div>
-                    </Link>
+                    </button>
                 </div>
             ))}
         </div>
         <div className="text-center mt-20 fade-up">
-            <Link href="#contact" className="inline-block border-b-2 border-[#ccff00] text-[#ccff00] font-mono text-xl hover:text-white hover:border-white transition-colors hover-trigger">GET A CUSTOM QUOTE →</Link>
+            <button onClick={toggleContact} className="inline-block border-b-2 border-[#ccff00] text-[#ccff00] font-mono text-xl hover:text-white hover:border-white transition-colors hover-trigger">GET A CUSTOM QUOTE →</button>
         </div>
       </section>
 
-      {/* WORK SECTION (FIXED: Pixel Math + Overflow Hidden) */}
+      {/* WORK SECTION */}
       <section ref={workSectionRef} id="work" className="relative z-30 bg-black h-screen overflow-hidden">
-         {/* Calculated Width: (5 projects + 2 panels) = 7 * 100vw = 700vw */}
          <div ref={workTrackRef} className="flex flex-nowrap h-full" style={{ width: `${(projects.length + 2) * 100}vw` }}>
             <div className="work-panel w-[100vw] h-screen flex flex-col justify-center items-center border-r border-[#222] bg-black shrink-0">
                 <h2 className="text-[15vw] font-funky text-white leading-none fade-up">THE<br/><span className="text-stroke-white text-transparent">WORK</span></h2>
@@ -384,7 +530,7 @@ export default function Home() {
             ))}
             <div className="work-panel w-[100vw] h-screen flex flex-col justify-center items-center border-r border-[#222] bg-[#ccff00] shrink-0">
                 <h2 className="text-[10vw] font-black leading-none text-black mb-10 text-center fade-up">WANT<br/>MORE?</h2>
-                <Link href="#contact" className="px-10 py-5 bg-black text-white rounded-full font-mono text-xl hover:scale-110 transition-transform hover-trigger fade-up">CONTACT US</Link>
+                <button onClick={toggleContact} className="px-10 py-5 bg-black text-white rounded-full font-mono text-xl hover:scale-110 transition-transform hover-trigger fade-up">CONTACT US</button>
             </div>
          </div>
       </section>
@@ -392,7 +538,6 @@ export default function Home() {
       {/* TESTIMONIALS */}
       <section id="testimonials" className="relative z-30 bg-[#f5f5f5] py-40 overflow-hidden border-t-4 border-black">
           <h2 className="text-[12vw] font-funky leading-none text-center mb-20 fade-up">THE <span className="text-[#ff0055]">HYPE</span></h2>
-          
           <div className="testimonial-track flex w-max">
               {[...Array(2)].map((_, loop) => (
                   <div key={loop} className="flex gap-10 mx-10">
@@ -400,7 +545,6 @@ export default function Home() {
                           <div key={i} className="w-[80vw] md:w-[40vw] p-10 bg-white border-4 border-black shadow-[15px_15px_0px_black] shrink-0 hover:scale-105 transition-transform">
                               <p className="text-2xl md:text-4xl font-black uppercase leading-tight mb-8">"{t.text}"</p>
                               <div className="flex items-center gap-6">
-                                  {/* Profile Image */}
                                   <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-black shrink-0">
                                       <Image src={t.img} alt={t.author} fill className="object-cover" />
                                   </div>
@@ -411,7 +555,6 @@ export default function Home() {
                   </div>
               ))}
           </div>
-
           <div className="mt-40 bg-black text-white border-y-8 border-[#ccff00] py-8 rotate-1 scale-110">
               <div className="marquee-inner flex whitespace-nowrap">
                   {[...Array(10)].map((_, i) => (
@@ -441,7 +584,7 @@ export default function Home() {
                         <span className="font-mono text-xl border border-current px-4 py-1 rounded-full mb-6 inline-block">PHASE 0{i+1}: {phase.title}</span>
                         <p className="text-2xl md:text-5xl font-bold leading-tight max-w-4xl mt-6">{phase.desc}</p>
                         {i === phases.length - 1 && (
-                            <Link href="#contact" className="inline-block mt-10 px-8 py-4 bg-black text-white font-mono text-lg rounded-full hover:scale-105 transition-transform hover-trigger">BUILD WITH US</Link>
+                            <button onClick={toggleContact} className="inline-block mt-10 px-8 py-4 bg-black text-white font-mono text-lg rounded-full hover:scale-105 transition-transform hover-trigger">BUILD WITH US</button>
                         )}
                     </div>
                     <div className="absolute bottom-10 right-10 text-[20vw] font-funky opacity-10 leading-none pointer-events-none select-none">0{i+1}</div>
@@ -450,7 +593,7 @@ export default function Home() {
          </div>
       </section>
 
-      {/* CONTACT */}
+      {/* CONTACT - CHANGED TO TRIGGER OVERLAY */}
       <section id="contact" className="relative z-50 bg-[#ccff00] text-black py-40 px-4 md:px-20 min-h-screen flex flex-col justify-center">
          <h2 className="text-[12vw] font-funky leading-none mb-10 fade-up">HOLLER<br/>AT US</h2>
          <div className="w-full max-w-5xl flex flex-col gap-10">
@@ -459,8 +602,8 @@ export default function Home() {
                 <a href={`mailto:${CONTACT_EMAIL}`} className="text-4xl md:text-6xl font-black underline hover:text-white transition-colors hover-trigger break-all">{CONTACT_EMAIL}</a>
              </div>
              <div className="flex flex-col md:flex-row gap-6 fade-up">
-                 <a href={`mailto:${CONTACT_EMAIL}`} className="px-12 py-6 bg-black text-[#ccff00] text-2xl font-black rounded-full hover:scale-105 hover:-rotate-2 transition-transform shadow-[10px_10px_0px_white] text-center hover-trigger">START PROJECT</a>
-                 <a href="https://calendly.com" target="_blank" className="px-12 py-6 border-4 border-black text-black text-2xl font-black rounded-full hover:bg-black hover:text-white transition-colors text-center hover-trigger">SCHEDULE CALL</a>
+                 <button onClick={toggleContact} className="px-12 py-6 bg-black text-[#ccff00] text-2xl font-black rounded-full hover:scale-105 hover:-rotate-2 transition-transform shadow-[10px_10px_0px_white] text-center hover-trigger">START PROJECT</button>
+                 <a href={CAL_COM_LINK} target="_blank" className="px-12 py-6 border-4 border-black text-black text-2xl font-black rounded-full hover:bg-black hover:text-white transition-colors text-center hover-trigger">SCHEDULE CALL</a>
              </div>
          </div>
       </section>
@@ -475,6 +618,8 @@ export default function Home() {
           </div>
           <p className="mt-12 text-white/30 font-mono text-sm fade-up">© 2026 PARAPIXEL.</p>
       </footer>
+
+      <AIChatbot />
 
     </main>
   );

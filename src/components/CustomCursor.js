@@ -83,10 +83,10 @@ export default function CustomCursor() {
   return (
     <>
       {/* DOT - Z-Index 11001 to beat Nav */}
-      <div ref={cursorRef} className="fixed top-0 left-0 w-3 h-3 bg-[#ccff00] rounded-full pointer-events-none z-[11001] mix-blend-difference" />
+      <div ref={cursorRef} className="fixed top-0 left-0 w-3 h-3 bg-[#ccff00] rounded-full pointer-events-none z-[99999] mix-blend-difference" />
       
       {/* FOLLOWER - Z-Index 11000 */}
-      <div ref={followerRef} className="fixed top-0 left-0 w-10 h-10 border-2 border-[#ccff00] rounded-full pointer-events-none z-[11000] flex items-center justify-center overflow-hidden mix-blend-difference">
+      <div ref={followerRef} className="fixed top-0 left-0 w-10 h-10 border-2 border-[#ccff00] rounded-full pointer-events-none z-[99998] flex items-center justify-center overflow-hidden mix-blend-difference">
         <span className="text-[10px] font-black text-black">{cursorText}</span>
       </div>
     </>
