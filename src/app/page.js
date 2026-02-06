@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
 
 // --- CONFIG ---
 const CONTACT_EMAIL = "hello@parapixel.in.net";
-const WEB3FORMS_ACCESS_KEY = "ddd0f2b5-2482-459c-904b-687910c364b0"; // <--- PASTE KEY HERE
+const WEB3FORMS_ACCESS_KEY = "ddd0f2b5-2482-459c-904b-687910c364b0"; 
 const CAL_COM_LINK = "https://cal.com/parapixel/intro"; 
 
 // --- DATA ---
@@ -461,7 +461,7 @@ export default function Home() {
       <section className="relative w-full h-[100dvh] flex flex-col items-center justify-center overflow-hidden z-10 pointer-events-none pb-20">
         <div className="hero-reveal hero-line font-funky text-[15vw] md:text-[12vw] leading-none z-10 mix-blend-overlay opacity-50 text-stroke-black text-transparent md:text-black">WE BUILD</div>
         {stickers.map((s, i) => (
-            <div key={i} className={`sticker absolute ${s.rot} ${s.color} px-4 py-2 font-mono font-bold text-black border-2 border-black shadow-[4px_4px_0px_black] z-40 pointer-events-auto hover:scale-110 transition-transform cursor-pointer block hover-trigger`} style={{ top: s.top, left: s.left, right: s.right, bottom: s.bottom, transform: s.transform }}>{s.text}</div>
+            <div key={i} className={`sticker absolute ${s.rot} ${s.color} px-4 py-2 font-mono font-bold text-black border-2 border-black shadow-[4px_4px_0px_black] z-40 pointer-events-auto hover:scale-110 transition-transform cursor-pointer hidden md:block hover-trigger`} style={{ top: s.top, left: s.left, right: s.right, bottom: s.bottom, transform: s.transform }}>{s.text}</div>
         ))}
         <div className="hero-reveal stuff-wrapper relative z-20 mt-2 md:mt-4 cursor-pointer group pointer-events-auto" onMouseEnter={handleStuffHover}>
           <div ref={stuffTextRef} className="stuff-text relative inline-block text-[25vw] md:text-[22vw] leading-[0.8] font-funky tracking-tighter text-[#ff0055] drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">STUFF</div>

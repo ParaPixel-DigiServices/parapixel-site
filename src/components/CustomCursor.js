@@ -8,6 +8,9 @@ export default function CustomCursor() {
   const [cursorText, setCursorText] = useState(""); 
 
   useEffect(() => {
+    // Safety check: If elements don't exist (unlikely but good practice), stop.
+    if (!cursorRef.current || !followerRef.current) return;
+
     // 1. Initial Position (Hide until mouse moves)
     gsap.set(cursorRef.current, { xPercent: -50, yPercent: -50, scale: 0 });
     gsap.set(followerRef.current, { xPercent: -50, yPercent: -50, scale: 0 });
@@ -69,6 +72,7 @@ export default function CustomCursor() {
     };
 
     // Attach to Window (Catches all hover events everywhere)
+    // Only run on non-touch devices ideally, but 'hidden' class handles visuals
     window.addEventListener('mousemove', moveCursor);
     window.addEventListener('mouseover', onMouseOver);
     window.addEventListener('mouseout', onMouseOut);
@@ -82,11 +86,17 @@ export default function CustomCursor() {
 
   return (
     <>
-      {/* DOT - Z-Index 11001 to beat Nav */}
-      <div ref={cursorRef} className="fixed top-0 left-0 w-3 h-3 bg-[#ccff00] rounded-full pointer-events-none z-[99999] mix-blend-difference" />
+      {/* DOT - Hidden on Mobile (hidden), Visible on Desktop (md:block) */}
+      <div 
+        ref={cursorRef} 
+        className="fixed top-0 left-0 w-3 h-3 bg-[#ccff00] rounded-full pointer-events-none z-[99999] mix-blend-difference hidden md:block" 
+      />
       
-      {/* FOLLOWER - Z-Index 11000 */}
-      <div ref={followerRef} className="fixed top-0 left-0 w-10 h-10 border-2 border-[#ccff00] rounded-full pointer-events-none z-[99998] flex items-center justify-center overflow-hidden mix-blend-difference">
+      {/* FOLLOWER - Hidden on Mobile (hidden), Visible on Desktop (md:block) */}
+      <div 
+        ref={followerRef} 
+        className="fixed top-0 left-0 w-10 h-10 border-2 border-[#ccff00] rounded-full pointer-events-none z-[99998] flex items-center justify-center overflow-hidden mix-blend-difference hidden md:block"
+      >
         <span className="text-[10px] font-black text-black">{cursorText}</span>
       </div>
     </>
