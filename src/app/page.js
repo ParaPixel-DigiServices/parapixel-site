@@ -404,12 +404,12 @@ export default function Home() {
 
             {/* MENU */}
             <div ref={menuBgRef} className="fixed inset-0 z-[9990] bg-[#ccff00] pointer-events-none will-change-[clip-path]" style={{ clipPath: "circle(0% at 100% 0%)" }} />
-            <div ref={menuTextRef} className="fixed inset-0 z-[9991] flex flex-col items-center justify-center pointer-events-none opacity-0">
-                <div className="flex flex-col gap-2 md:gap-4 text-center w-full pointer-events-auto">
+            <div ref={menuTextRef} className="fixed inset-0 z-[9991] flex flex-col items-center justify-center pointer-events-none opacity-0 md:px-8 md:py-24">
+                <div className="flex flex-col gap-2 md:gap-4 text-center w-full pointer-events-auto max-h-screen md:max-h-[calc(100vh-12rem)] overflow-y-auto">
                     {menuItems.map((item, i) => (
                         <div key={i} className="menu-link-item overflow-hidden relative h-[15vw] md:h-[10vw] flex items-center justify-center w-full">
                             {item.action === 'contact' ? (
-                                <button onClick={toggleContact} className="group relative block w-full h-full">
+                                <button onClick={toggleContact} className="group relative block w-full h-full" onMouseEnter={() => setActiveMenuImg(item.img)} onMouseLeave={() => setActiveMenuImg(null)}>
                                     <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
                                         <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
                                     </div>
@@ -431,7 +431,7 @@ export default function Home() {
                     ))}
                 </div>
             </div>
-            <div ref={menuCursorRef} className="fixed top-0 left-0 w-[60vw] md:w-[500px] aspect-video pointer-events-none z-[9995] rounded-2xl overflow-hidden border-4 border-black shadow-[20px_20px_0px_black]" style={{ opacity: isMenuOpen && activeMenuImg ? 1 : 0, transition: 'opacity 0.2s ease-out' }}>
+            <div ref={menuCursorRef} className="hidden md:block fixed top-0 left-0 w-[500px] aspect-video pointer-events-none z-[9995] rounded-2xl overflow-hidden border-4 border-black shadow-[20px_20px_0px_black]" style={{ opacity: isMenuOpen && activeMenuImg ? 1 : 0, transition: 'opacity 0.2s ease-out' }}>
                 <img ref={menuImageRef} src={activeMenuImg || null} alt="Preview" className="w-full h-full object-cover" />
             </div>
 
