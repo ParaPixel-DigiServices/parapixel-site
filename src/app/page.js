@@ -122,7 +122,7 @@ function ContactOverlay({ isOpen, onClose }) {
 
     return (
         <div ref={overlayRef} className="fixed inset-0 z-[11000] bg-black text-white overflow-hidden flex flex-col pointer-events-auto" style={{ clipPath: "circle(0% at 100% 0%)" }}>
-            <button onClick={onClose} className="absolute top-8 right-8 md:top-12 md:right-12 w-14 h-14 bg-white rounded-full flex items-center justify-center z-50 hover:scale-110 transition-transform cursor-pointer">
+            <button onClick={onClose} className="absolute top-8 right-8 md:top-12 md:right-12 w-14 h-14 bg-white rounded-full flex items-center justify-center z-50 hover:scale-110 transition-transform">
                 <span className="text-black font-black text-xl">X</span>
             </button>
 
@@ -170,7 +170,7 @@ function ContactOverlay({ isOpen, onClose }) {
                                     </div>
                                 </div>
 
-                                <select name="budget" className="bg-transparent border-b-2 border-white/20 py-4 text-xl md:text-3xl font-bold focus:border-[#ccff00] outline-none transition-colors text-white cursor-pointer appearance-none rounded-none">
+                                <select name="budget" className="bg-transparent border-b-2 border-white/20 py-4 text-xl md:text-3xl font-bold focus:border-[#ccff00] outline-none transition-colors text-white appearance-none rounded-none">
                                     {currency === "INR" ? (
                                         <>
                                             <option value="10k-50k INR" className="bg-black">₹10k - ₹50k</option>
@@ -191,7 +191,7 @@ function ContactOverlay({ isOpen, onClose }) {
                                 </select>
                             </div>
 
-                            <button type="submit" disabled={status === "SENDING"} className="mt-10 px-12 py-6 bg-[#ccff00] text-black text-2xl font-black rounded-full hover:scale-105 hover:-rotate-1 transition-transform self-start disabled:opacity-50 disabled:cursor-not-allowed">
+                            <button type="submit" disabled={status === "SENDING"} className="mt-10 px-12 py-6 bg-[#ccff00] text-black text-2xl font-black rounded-full hover:scale-105 hover:-rotate-1 transition-transform self-start disabled:opacity-50">
                                 {status === "IDLE" && "SEND IT →"}
                                 {status === "SENDING" && "SENDING..."}
                                 {status === "SUCCESS" && "SENT!"}
@@ -352,9 +352,8 @@ export default function Home() {
                 trigger: processRef.current,
                 start: "top top",
                 end: "+=3000",
-                scrub: true,
+                scrub: 1,
                 pin: true,
-                anticipatePin: 1
             }
         });
         stackCards.forEach((card, i) => {
@@ -410,7 +409,7 @@ export default function Home() {
                     {menuItems.map((item, i) => (
                         <div key={i} className="menu-link-item overflow-hidden relative h-[15vw] md:h-[10vw] flex items-center justify-center w-full">
                             {item.action === 'contact' ? (
-                                <button onClick={toggleContact} className="group relative block w-full h-full cursor-pointer">
+                                <button onClick={toggleContact} className="group relative block w-full h-full">
                                     <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
                                         <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
                                     </div>
@@ -419,7 +418,7 @@ export default function Home() {
                                     </div>
                                 </button>
                             ) : (
-                                <Link href={item.href} onClick={toggleMenu} className="group relative block w-full h-full cursor-pointer" onMouseEnter={() => setActiveMenuImg(item.img)} onMouseLeave={() => setActiveMenuImg(null)}>
+                                <Link href={item.href} onClick={toggleMenu} className="group relative block w-full h-full" onMouseEnter={() => setActiveMenuImg(item.img)} onMouseLeave={() => setActiveMenuImg(null)}>
                                     <div className="absolute top-0 left-0 w-full flex justify-center transition-transform duration-500 ease-expo group-hover:-translate-y-full will-change-transform">
                                         <h2 className="text-[15vw] md:text-[10vw] font-funky leading-[0.85] tracking-tighter text-black">{item.label}</h2>
                                     </div>
@@ -438,7 +437,7 @@ export default function Home() {
 
             {/* NAV */}
             <header className="fixed top-0 left-0 w-full p-6 md:p-12 flex justify-between items-center z-[10000] mix-blend-difference text-white pointer-events-none">
-                <div className="nav-item flex items-center gap-4 cursor-pointer pointer-events-auto group hover-trigger">
+                <div className="nav-item flex items-center gap-4 pointer-events-auto group hover-trigger">
                     <div className="relative w-12 h-12 md:w-16 md:h-16 transition-transform duration-500 group-hover:rotate-180">
                         <Image src="/logo.svg" alt="Logo" fill className="object-contain brightness-0 invert" />
                     </div>
@@ -459,9 +458,9 @@ export default function Home() {
             <section className="relative w-full h-[100dvh] flex flex-col items-center justify-center overflow-hidden z-10 pointer-events-none pb-20">
                 <div className="hero-reveal hero-line font-funky text-[15vw] md:text-[12vw] leading-none z-10 mix-blend-overlay opacity-50 text-stroke-black text-transparent md:text-black">WE BUILD</div>
                 {stickers.map((s, i) => (
-                    <div key={i} className={`sticker absolute ${s.rot} ${s.color} px-4 py-2 font-mono font-bold text-black border-2 border-black shadow-[4px_4px_0px_black] z-40 pointer-events-auto hover:scale-110 transition-transform cursor-pointer hidden md:block hover-trigger`} style={{ top: s.top, left: s.left, right: s.right, bottom: s.bottom, transform: s.transform }}>{s.text}</div>
+                    <div key={i} className={`sticker absolute ${s.rot} ${s.color} px-4 py-2 font-mono font-bold text-black border-2 border-black shadow-[4px_4px_0px_black] z-40 pointer-events-auto hover:scale-110 transition-transform hidden md:block hover-trigger`} style={{ top: s.top, left: s.left, right: s.right, bottom: s.bottom, transform: s.transform }}>{s.text}</div>
                 ))}
-                <div className="hero-reveal stuff-wrapper relative z-20 mt-2 md:mt-4 cursor-pointer group pointer-events-auto" onMouseEnter={handleStuffHover}>
+                <div className="hero-reveal stuff-wrapper relative z-20 mt-2 md:mt-4 group pointer-events-auto" onMouseEnter={handleStuffHover}>
                     <div ref={stuffTextRef} className="stuff-text relative inline-block text-[25vw] md:text-[22vw] leading-[0.8] font-funky tracking-tighter text-[#ff0055] drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">STUFF</div>
                 </div>
                 <div className="md:hidden absolute bottom-60 z-30 pointer-events-auto hero-reveal">
@@ -469,7 +468,7 @@ export default function Home() {
                 </div>
 
                 {/* HERO STRIP */}
-                <div className="caution-strip absolute bottom-10 w-full bg-[#ccff00] border-y-4 border-black py-3 md:py-4 rotate-[-2deg] scale-110 z-30 overflow-hidden shadow-[0_0_30px_#ccff00] transition-all duration-300 hover:rotate-0 hover:scale-100 hover:bg-black hover:text-[#ccff00] group pointer-events-auto cursor-help">
+                <div className="caution-strip absolute bottom-10 w-full bg-[#ccff00] border-y-4 border-black py-3 md:py-4 rotate-[-2deg] scale-110 z-30 overflow-hidden shadow-[0_0_30px_#ccff00] transition-all duration-300 hover:rotate-0 hover:scale-100 hover:bg-black hover:text-[#ccff00] group pointer-events-auto">
                     <div className="flex whitespace-nowrap animate-marquee">
                         {[...Array(10)].map((_, i) => (
                             <span key={i} className="flex items-center gap-4 text-xl md:text-3xl font-black mx-4 tracking-widest text-black group-hover:text-[#ccff00] font-mono">
@@ -489,7 +488,7 @@ export default function Home() {
                 <div className="max-w-7xl mx-auto px-4 flex flex-col gap-10">
                     {services.map((service, i) => (
                         <div key={i} className="fade-up">
-                            <button onClick={toggleContact} className={`group relative w-full border-4 border-white/20 bg-[#111] p-8 md:p-12 cursor-pointer transition-all duration-500 ease-out transform ${service.rotate} hover:rotate-0 hover:z-20 hover:border-white block text-left hover-trigger`} onMouseEnter={handleServiceEnter} onMouseLeave={(e) => handleServiceLeave(e, service.rotate)}>
+                            <button onClick={toggleContact} className={`group relative w-full border-4 border-white/20 bg-[#111] p-8 md:p-12 transition-all duration-500 ease-out transform ${service.rotate} hover:rotate-0 hover:z-20 hover:border-white block text-left hover-trigger`} onMouseEnter={handleServiceEnter} onMouseLeave={(e) => handleServiceLeave(e, service.rotate)}>
                                 <div className="service-bg absolute inset-0 w-full h-full opacity-0 pointer-events-none z-0"><img src={service.img} className="w-full h-full object-cover grayscale opacity-30" alt="BG" /></div>
                                 <div className="relative z-10 w-full flex flex-col">
                                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-6 md:gap-0">
@@ -558,7 +557,7 @@ export default function Home() {
                         {[...Array(10)].map((_, i) => (
                             <span key={i} className="flex items-center gap-20 mx-10">
                                 {clients.map((client, j) => (
-                                    <span key={j} className="text-4xl md:text-6xl font-funky opacity-50 hover:opacity-100 transition-opacity cursor-crosshair">{client}</span>
+                                    <span key={j} className="text-4xl md:text-6xl font-funky opacity-50 hover:opacity-100 transition-opacity">{client}</span>
                                 ))}
                             </span>
                         ))}

@@ -210,7 +210,7 @@ export default function AIChatbot() {
                         <button
                             type="submit"
                             disabled={isLoading || !input.trim()}
-                            className="px-6 bg-[#ccff00] text-black font-bold hover:bg-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-6 bg-[#ccff00] text-black font-bold hover:bg-white transition-colors disabled:opacity-50"
                         >
                             SEND
                         </button>

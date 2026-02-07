@@ -19,7 +19,11 @@ body {
   font-family: var(--font-unbounded), sans-serif;
   margin: 0;
   overflow-x: hidden;
-  cursor: none;
+  cursor: none !important;
+}
+
+* {
+  cursor: none !important;
 }
 
 /* Custom Font Class */

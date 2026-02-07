@@ -4,13 +4,15 @@ import { ReactLenis } from '@studio-freight/react-lenis';
 
 export default function SmoothScroll({ children }) {
   return (
-    <ReactLenis 
-      root 
+    <ReactLenis
+      root
       options={{
-        lerp: 0.05,         // The "Weight" (0.1 is standard, 0.05 is heavy/cinematic)
-        duration: 1.5,      // How long the glide lasts
+        lerp: 0.1,          // Standard smooth scrolling
+        duration: 1.2,      // How long the glide lasts
         smoothWheel: true,
-        wheelMultiplier: 1.2, // Speed up the scroll slightly
+        wheelMultiplier: 1, // Standard scroll speed
+        syncTouch: true,    // Better mobile experience
+        infinite: false,
       }}
     >
       {children}
