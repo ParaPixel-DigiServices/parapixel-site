@@ -15,7 +15,7 @@ if (typeof window !== "undefined") {
 }
 
 // --- CONFIG ---
-const CONTACT_EMAIL = "hello@parapixel.in.net";
+const CONTACT_EMAIL = "hello@parapixel.net";
 const WEB3FORMS_ACCESS_KEY = "ddd0f2b5-2482-459c-904b-687910c364b0";
 const CAL_COM_LINK = "https://cal.com/parapixel/intro";
 
@@ -69,7 +69,7 @@ const stickers = [
     { text: "100% FRESH", color: "bg-[#ccff00]", rot: "rotate-6", top: "18%", right: "5%" },
     { text: "NO TEMPLATES", color: "bg-white", rot: "rotate-12", bottom: "35%", left: "8%" },
     { text: "COOKED", color: "bg-[#ff0055]", rot: "-rotate-6", bottom: "32%", right: "8%" },
-    { text: "PURE CHAOS", color: "bg-[#ffaa00]", rot: "rotate-3", bottom: "18%", left: "50%", transform: "translateX(-50%)" },
+    { text: "PURE CHAOS", color: "bg-[#ffaa00]", rot: "rotate-3", bottom: "18%", left: "75%", transform: "translateX(-50%)" },
 ];
 
 // --- CONTACT FORM COMPONENT ---
@@ -126,10 +126,10 @@ function ContactOverlay({ isOpen, onClose }) {
                 <span className="text-black font-black text-xl">X</span>
             </button>
 
-            <div ref={contentRef} className="w-full h-full flex flex-col items-center justify-center p-4 md:p-20 overflow-y-auto">
+            <div ref={contentRef} className="w-full h-full flex flex-col items-center justify-center p-8 md:p-20 py-16 md:py-24 overflow-y-auto">
                 {step === 1 && (
                     <div className="w-full max-w-4xl">
-                        <h2 className="text-[10vw] md:text-[6vw] font-funky leading-none mb-10 text-[#ccff00]">LETS <br /> COOK</h2>
+                        <h2 className="text-[10vw] md:text-[6vw] font-funky leading-none mb-10 text-[#ccff00] text-center">LETS COOK</h2>
 
                         <form onSubmit={handleSubmit} className="flex flex-col gap-8 w-full">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -463,9 +463,15 @@ export default function Home() {
                 <div className="hero-reveal stuff-wrapper relative z-20 mt-2 md:mt-4 group pointer-events-auto" onMouseEnter={handleStuffHover}>
                     <div ref={stuffTextRef} className="stuff-text relative inline-block text-[25vw] md:text-[22vw] leading-[0.8] font-funky tracking-tighter text-[#ff0055] drop-shadow-[8px_8px_0px_rgba(0,0,0,1)]">STUFF</div>
                 </div>
-                <div className="md:hidden absolute bottom-60 z-30 pointer-events-auto hero-reveal">
-                    <button onClick={toggleContact} className="px-10 py-4 bg-black text-[#ccff00] rounded-full font-black text-xl hover:scale-110 hover:-rotate-2 transition-transform shadow-[5px_5px_0px_#ccff00] hover-trigger">START PROJECT</button>
-                </div>
+
+                <button
+                    onClick={toggleContact}
+                    className="hero-reveal pointer-events-auto mt-16 md:mt-12 px-6 py-3 bg-[#ccff00] border-[3px] border-black rounded-[2rem] shadow-[0_6px_0_#004d4d] hover:shadow-none hover:translate-y-1 hover:animate-shake transition-all duration-200 group-trigger z-50"
+                >
+                    <span className="font-black text-lg md:text-2xl tracking-tighter text-black uppercase">
+                        Start Your Project
+                    </span>
+                </button>
 
                 {/* HERO STRIP */}
                 <div className="caution-strip absolute bottom-10 w-full bg-[#ccff00] border-y-4 border-black py-3 md:py-4 rotate-[-2deg] scale-110 z-30 overflow-hidden shadow-[0_0_30px_#ccff00] transition-all duration-300 hover:rotate-0 hover:scale-100 hover:bg-black hover:text-[#ccff00] group pointer-events-auto">
