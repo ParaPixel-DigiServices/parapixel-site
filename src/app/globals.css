@@ -6,7 +6,7 @@
   --color-pop-pink: #ff6b6b;
   --color-pop-blue: #4ecdc4;
   --color-pop-yellow: #ffe66d;
-  
+
   /* Fonts */
   --font-unbounded: var(--font-unbounded);
   --font-funky: var(--font-funky); /* Register Funky */
@@ -66,13 +66,21 @@ body {
   color: transparent;
 }
 
-a, button, .hover-trigger { cursor: none; }
+a,
+button,
+.hover-trigger {
+  cursor: none;
+}
 
 /* ... existing styles ... */
 
 @keyframes marquee {
-  0% { transform: translateX(0%); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .animate-marquee {
@@ -83,4 +91,16 @@ a, button, .hover-trigger { cursor: none; }
 .text-stroke-white {
   -webkit-text-stroke: 2px white;
   color: transparent;
+}
+
+/* Hide scrollbars for chatbot */
+.overflow-y-auto::-webkit-scrollbar,
+textarea::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-y-auto,
+textarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

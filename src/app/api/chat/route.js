@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export const runtime = "edge"; 
+export const runtime = "edge";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
 
@@ -38,9 +38,9 @@ export async function POST(req) {
   try {
     const { history, message } = await req.json();
 
-    const model = genAI.getGenerativeModel({ 
+    const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
-      systemInstruction: SYSTEM_PROMPT 
+      systemInstruction: SYSTEM_PROMPT
     });
 
     // 1. Map frontend roles to Gemini roles
@@ -84,6 +84,25 @@ export async function POST(req) {
 
   } catch (error) {
     console.error("API Error:", error);
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+
+    let userFriendlyMessage = "Sorry, I'm unable to respond right now. Please try again in a moment.";
+
+    // Parse specific error types
+    if (error.message) {
+      if (error.message.includes("API key not valid") || error.message.includes("API_KEY_INVALID")) {
+        userFriendlyMessage = "Configuration error: AI service is not properly set up. Please contact support.";
+      } else if (error.message.includes("quota") || error.message.includes("limit")) {
+        userFriendlyMessage = "Service temporarily unavailable due to high demand. Please try again shortly.";
+      } else if (error.message.includes("network") || error.message.includes("fetch")) {
+        userFriendlyMessage = "Network connection issue. Please check your internet and try again.";
+      } else if (error.message.includes("timeout")) {
+        userFriendlyMessage = "Request timed out. Please try a shorter message or try again.";
+      }
+    }
+
+    return new Response(JSON.stringify({ error: userFriendlyMessage }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 }
