@@ -37,11 +37,12 @@ const services = [
 ];
 
 const projects = [
-    { id: "01", name: "TOURVISTO", client: "INHOUSE", type: "ADMIN DASHBOARD", img: "/admindb.png", url: "#" },
-    { id: "02", name: "CONVERSO", client: "ALLEN", type: "SAAS", img: "/converso.png", url: "#" },
-    { id: "03", name: "NIMBUS", client: "MOCKUP", type: "ECOMMERCE", img: "/nimbus.png", url: "#" },
-    { id: "04", name: "ZENTRI", client: "CLONE", type: "GAMING", img: "/zentri.png", url: "#" },
-    { id: "05", name: "VELVET POUR", client: "MOCKUP", type: "GSAP", img: "/velvet.png", url: "#" }
+    { id: "01", name: "VYBE", client: "INHOUSE", type: "SOCIAL MEDIA", img: "/vybe.png", url: "https://vybe-pp.vercel.app/" },
+    { id: "02", name: "TOURVISTO", client: "INHOUSE", type: "ADMIN DASHBOARD", img: "/admindb.png", url: "#" },
+    { id: "03", name: "CONVERSO", client: "ALLEN", type: "SAAS", img: "/converso.png", url: "#" },
+    { id: "04", name: "NIMBUS", client: "MOCKUP", type: "ECOMMERCE", img: "/nimbus.png", url: "#" },
+    { id: "05", name: "ZENTRI", client: "CLONE", type: "GAMING", img: "/zentri.png", url: "https://zentri-pp.vercel.app/" },
+    { id: "06", name: "VELVET POUR", client: "MOCKUP", type: "GSAP", img: "/velvet.png", url: "https://velvetpour-pp.vercel.app/" }
 ];
 
 const phases = [
