@@ -1,5 +1,5 @@
-import localFont from "next/font/local"; 
-import { Unbounded, Space_Grotesk } from "next/font/google"; 
+import localFont from "next/font/local";
+import { Unbounded, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import CustomCursor from "@/components/CustomCursor";
 import SmoothScroll from "@/components/SmoothScroll";
@@ -36,9 +36,9 @@ export const metadata = {
   },
   description: "We build immersive 3D websites, high-performance mobile apps, and scalable SaaS platforms. A brutalist digital agency based in Bangalore, crafting digital chaos.",
   keywords: ["Web Design", "App Development", "SaaS", "3D Website", "Bangalore Agency", "Next.js", "React Native", "Brutalist Design"],
-  authors: [{ name: "Amogha Rao", url: "https://parapixel.net" }],
+  authors: [{ name: "Amogha Rao and Muneer Alam", url: "https://parapixel.net" }],
   creator: "ParaPixel Team",
-  
+
   // 2. FAVICON / ICONS (This changes the logo in the tab)
   icons: {
     icon: "/logo.svg",        // Standard favicon
